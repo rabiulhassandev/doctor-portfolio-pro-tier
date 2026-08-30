@@ -24,10 +24,10 @@
                 @if ($photo)
                     <img src="{{ $photo }}"
                          alt="{{ $doctor->name }}, {{ $doctor->specialization }}"
-                         class="aspect-[4/5] w-full rounded-2xl object-cover shadow-lift">
+                         class="aspect-[4/5] w-full rounded-[4px] object-cover shadow-lift">
                 @endif
 
-                <dl class="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-card">
+                <dl class="flex flex-col gap-4 rounded-[4px] border border-line bg-surface p-5 shadow-card">
                     @if ($doctor->years_of_experience)
                         <div class="flex items-baseline justify-between gap-4 border-b border-line pb-4">
                             <dt class="text-sm text-muted">Experience</dt>
@@ -56,7 +56,7 @@
                         <div class="flex items-baseline justify-between gap-4">
                             <dt class="text-sm text-muted">Chamber</dt>
                             <dd>
-                                <a href="{{ $doctor->telHref() }}" class="link-underline font-semibold text-brand">
+                                <a href="{{ $doctor->telHref() }}" class="link-underline font-semibold text-ink">
                                     {{ $doctor->phone }}
                                 </a>
                             </dd>
@@ -78,7 +78,7 @@
                 @endif
 
                 @if ($doctor->philosophy)
-                    <div class="flex flex-col gap-3 rounded-2xl border-l-2 border-accent bg-paper-shade p-6" data-reveal>
+                    <div class="flex flex-col gap-3 rounded-[4px] border-l-2 border-brass bg-paper-shade p-6" data-reveal>
                         <p class="eyebrow">My approach</p>
                         <div class="font-display text-xl leading-snug text-ink">
                             {!! nl2br(e($doctor->philosophy)) !!}
@@ -94,7 +94,7 @@
                             @foreach ($doctor->qualifications as $qualification)
                                 <li class="relative">
                                     {{-- The dot on the timeline. --}}
-                                    <span class="absolute -left-[1.8rem] top-1.5 size-3 rounded-full border-2 border-paper bg-accent" aria-hidden="true"></span>
+                                    <span class="absolute -left-[1.8rem] top-1.5 size-3 rounded-[3px] border-2 border-paper bg-brass" aria-hidden="true"></span>
 
                                     <p class="font-semibold text-ink">{{ $qualification['title'] ?? '' }}</p>
                                     <p class="text-[0.9375rem] text-muted">

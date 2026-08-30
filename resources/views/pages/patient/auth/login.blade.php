@@ -31,11 +31,11 @@
                            name="remember"
                            value="1"
                            @checked(old('remember'))
-                           class="size-4 rounded border-line-strong text-brand focus:outline-2 focus:outline-offset-2 focus:outline-accent/40">
+                           class="size-4 rounded border-line-strong text-ink focus:outline-2 focus:outline-offset-2 focus:outline-brass/40">
                     Keep me signed in
                 </label>
 
-                <a href="{{ route('patient.password.request') }}" class="link-underline text-sm font-medium text-brand">
+                <a href="{{ route('patient.password.request') }}" class="link-underline text-sm font-medium text-ink">
                     Forgotten your password?
                 </a>
             </div>
@@ -47,7 +47,7 @@
 
         <x-slot:footer>
             New here?
-            <a href="{{ route('patient.register') }}" class="link-underline font-semibold text-brand">Create an account</a>
+            <a href="{{ route('patient.register') }}" class="link-underline font-semibold text-brass">Create an account</a>
         </x-slot:footer>
     </x-patient.auth-shell>
 </x-layouts.app>

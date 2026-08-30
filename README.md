@@ -234,55 +234,71 @@ Almost everything is edited in the admin panel. Only two things live in code.
 
 ### 1. Colours, site name and logo — `config/site.php`
 
-**This is the file to edit per buyer.**
+**This is the file to edit per buyer.** It carries TWO palettes, and they are
+deliberately different.
+
+**The public website** is dark, photographic and brass-accented:
 
 ```php
-'colors' => [
-    'primary'       => '#0f5c86',  // Buttons and links
-    'primary_dark'  => '#0a4363',  // Hover state
-    'accent'        => '#14a5a0',  // The one colour that draws the eye
-
-    'paper'         => '#fbfaf8',  // The page itself
-    'paper_shade'   => '#f4f2ee',  // Alternating bands
-    'line'          => '#e4e0d9',  // Hairline borders
-    'ink'           => '#16242e',  // Body copy
-    'ink_deep'      => '#101c24',  // Footer and inverted panels
+colors => [
+    night        => #0B1620,  // Hero, footer, calls to action
+    night_soft   => #132433,  // Raised panels on the dark
+    brass        => #C8A45C,  // The one accent, used once per view
+    paper        => #F8F6F2,  // Light sections, for reading at length
+    ink          => #111C26,  // Body copy
     // …
 ],
-
-'logo' => null,   // e.g. 'images/logo.svg', relative to public/
 ```
 
-The colours are injected into each page as CSS custom properties, and the
-Tailwind classes read those variables — so **changing a hex code here restyles
-the whole public site and the admin panel with no rebuild**. Leave `logo` as
-`null` and the doctor's initials are shown in a hairline circle instead, which
-looks deliberate rather than broken.
+**The admin panel** is a bright blue working tool:
 
-Two things are worth knowing before reaching for a brighter palette. The site is
-built on **paper, not white**: `paper` is the page, `paper_shade` is the
-alternating band, and the two sit close enough that the change reads as a fold
-rather than as a stripe. And borders are **hairlines**, not outlines — a 1px
-mid-blue rectangle around every card is the fastest way to make a site look like
-a template.
+```php
+admin => [
+    primary      => #4F7FE8,  // Topbar, active states, stat cards
+    sidebar      => #FFFFFF,  // The navigation column
+    canvas       => #F4F6F9,  // The page behind the cards
+    brand_tint   => #EAF0FD,  // Logo block and active menu item
+],
+```
+
+A patient should feel they have arrived somewhere considered. A receptionist at
+six in the evening wants contrast and legibility, not atmosphere. Trying to
+serve both with one palette makes a worse job of each — which is why there are
+two, and why a test asserts the public brass never appears inside `/admin`.
+
+Both are injected as CSS custom properties at render time, so **changing a hex
+code restyles its half of the system with no rebuild**. Leave `logo` as `null`
+and the doctor's initials appear in a brass-ruled square instead, which looks
+deliberate rather than broken.
+
+Three things are worth knowing before reaching for a different palette:
+
+- **Spend the brass once per view.** It marks the primary action, the active
+  navigation item, or the rule under a heading — not all three. Brass on every
+  icon and border is how a restrained palette turns gaudy.
+- **Long-form text sits on `paper`, never on `night`.** A full page of body copy
+  reversed out of near-black is hard work, and this site's readers are often
+  older than average.
+- **Every page opens with a dark band.** The navbar is transparent until you
+  scroll, so a page with a light top would lose its own header. If you add one,
+  give it a dark band.
 
 The same file carries the feature switches:
 
 ```php
-'features' => [
-    'blog'             => true,
-    'gallery'          => true,
-    'testimonials'     => true,
-    'faq'              => true,
-    'health_videos'    => true,
-    'booking'          => true,   // Off = Standard-tier behaviour
-    'whatsapp_button'  => true,
+features => [
+    blog             => true,
+    gallery          => true,
+    testimonials     => true,
+    faq              => true,
+    health_videos    => true,
+    booking          => true,   // Off = Standard-tier behaviour
+    whatsapp_button  => true,
 ],
 ```
 
 Turning one off hides the page, its navigation link **and** its sitemap entry —
 without deleting code you might want back later.
-
 ### 2. Site name — `.env`
 
 ```dotenv
@@ -293,12 +309,20 @@ APP_NAME="Dr. Amelia Hart"
 
 | Role | Latin | Bengali | Tailwind class |
 |---|---|---|---|
-| Text | Source Sans 3 | SolaimanLipi | `font-sans` |
-| Display | Newsreader | SolaimanLipi | `font-display` |
+| Text | Manrope | SolaimanLipi | `font-sans` |
+| Display | Cormorant Garamond | SolaimanLipi | `font-display` |
+| Admin panel | Inter | — | (set in AdminPanelProvider) |
 
 `h1` and `h2` pick up the display stack automatically; `h3` and below stay in
-the text stack, where a serif's thinner strokes would fight the body copy beside
-them.
+the text stack. Cormorant is a small-bodied, high-contrast face — it is
+magnificent at 56px and spidery at 20px, so it is reserved for display sizes
+and set at weight 300, where the contrast between thick and thin is the whole
+point of using it. It also takes slightly POSITIVE tracking: tight tracking
+suits a sturdy face, but on a delicate one it closes the counters and turns a
+headline into a texture.
+
+The admin panel uses neither. A dense table of appointment times wants an even,
+unremarkable grotesque, so it is set in Inter.
 
 No `lang` attribute is needed anywhere. Both stacks carry SolaimanLipi
 immediately after the Latin face, so a line mixing Bangla and English picks the
@@ -598,7 +622,7 @@ resources/
 php artisan test
 ```
 
-215 tests covering slot generation and its precedence rules, double-booking
+224 tests covering slot generation and its precedence rules, double-booking
 under concurrency, the booking wizard, payment verification (including a
 tampered-amount case), patient/staff isolation, document access control, every
 admin screen, every public page, and the schema.org output.

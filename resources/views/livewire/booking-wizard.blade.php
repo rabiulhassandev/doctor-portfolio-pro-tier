@@ -20,7 +20,7 @@
          ============================================================= --}}
     @if ($booked && ! $handingOffToGateway)
         <div class="flex flex-col items-center gap-6 text-center" data-reveal>
-            <span class="flex size-16 items-center justify-center rounded-full bg-positive-soft text-positive" aria-hidden="true">
+            <span class="flex size-16 items-center justify-center rounded-[3px] bg-positive-soft text-positive" aria-hidden="true">
                 <svg class="size-8" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                 </svg>
@@ -44,7 +44,7 @@
                     <div class="flex flex-col gap-0.5">
                         <dt class="text-sm text-muted">When</dt>
                         <dd class="text-lg font-semibold text-ink">{{ $booked->dateLabel() }}</dd>
-                        <dd class="tabular-nums text-brand">{{ $booked->timeLabel() }}</dd>
+                        <dd class="tabular-nums text-ink">{{ $booked->timeLabel() }}</dd>
                     </div>
 
                     <div class="flex flex-col gap-0.5">
@@ -73,7 +73,7 @@
                 </dl>
 
                 @if ($this->doctor()->booking_instructions)
-                    <p class="mt-5 rounded-xl border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
+                    <p class="mt-5 rounded-[3px] border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
                         {{ $this->doctor()->booking_instructions }}
                     </p>
                 @endif
@@ -90,7 +90,7 @@
          ============================================================= --}}
     @elseif ($booked && $handingOffToGateway)
         <div class="flex flex-col items-center gap-5 py-10 text-center">
-            <span class="flex size-14 items-center justify-center rounded-full bg-brand-soft text-brand" aria-hidden="true">
+            <span class="flex size-14 items-center justify-center rounded-[3px] bg-brass-soft text-ink" aria-hidden="true">
                 <svg class="size-7 animate-spin motion-reduce:animate-none" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" />
                     <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z" />
@@ -129,9 +129,9 @@
 
                 <li class="flex flex-1 items-center gap-2">
                     <span @class([
-                        'flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors',
-                        'bg-brand text-white' => $isCurrent,
-                        'bg-accent text-white' => $isDone,
+                        'flex size-7 shrink-0 items-center justify-center rounded-[3px] text-xs font-semibold transition-colors',
+                        'bg-night text-white' => $isCurrent,
+                        'bg-brass text-white' => $isDone,
                         'bg-paper-shade text-muted' => ! $isCurrent && ! $isDone,
                     ])>
                         @if ($isDone)
@@ -152,7 +152,7 @@
                     @unless ($loop->last)
                         <span @class([
                             'h-px flex-1 transition-colors',
-                            'bg-accent' => $isDone,
+                            'bg-brass' => $isDone,
                             'bg-line' => ! $isDone,
                         ])></span>
                     @endunless
@@ -192,9 +192,9 @@
                                         wire:key="date-{{ $date->toDateString() }}"
                                         wire:click="selectDate('{{ $date->toDateString() }}')"
                                         @class([
-                                            'card-lift flex flex-col items-center gap-0.5 rounded-xl border px-3 py-4 text-center transition-colors',
-                                            'border-brand bg-brand-soft text-brand' => $selectedDate === $date->toDateString(),
-                                            'border-line bg-surface text-ink hover:border-brand hover:bg-brand-soft/40' => $selectedDate !== $date->toDateString(),
+                                            'card-lift flex flex-col items-center gap-0.5 rounded-[3px] border px-3 py-4 text-center transition-colors',
+                                            'border-brass bg-brass-soft text-ink' => $selectedDate === $date->toDateString(),
+                                            'border-line bg-surface text-ink hover:border-brass hover:bg-brass-soft/40' => $selectedDate !== $date->toDateString(),
                                         ])>
                                     <span class="text-[0.6875rem] font-semibold uppercase tracking-[0.1em] text-muted">
                                         {{ $date->isToday() ? 'Today' : ($date->isTomorrow() ? 'Tomorrow' : $date->format('D')) }}
@@ -219,7 +219,7 @@
                         </div>
 
                         <button type="button" wire:click="backToDates"
-                                class="link-underline text-sm font-medium text-brand">
+                                class="link-underline text-sm font-medium text-ink">
                             Change the date
                         </button>
                     </div>
@@ -234,7 +234,7 @@
                                 <button type="button"
                                         wire:key="slot-{{ $slot->key() }}"
                                         wire:click="selectSlot('{{ $slot->key() }}')"
-                                        class="card-lift flex flex-col items-center gap-1 rounded-xl border border-line bg-surface px-3 py-4 text-center transition-colors hover:border-brand hover:bg-brand-soft/40">
+                                        class="card-lift flex flex-col items-center gap-1 rounded-[3px] border border-line bg-surface px-3 py-4 text-center transition-colors hover:border-brass hover:bg-brass-soft/40">
                                     <span class="text-lg font-semibold tabular-nums text-ink">{{ $slot->label() }}</span>
 
                                     @if ($scarcity = $slot->scarcityLabel())
@@ -268,7 +268,7 @@
                         </div>
 
                         <button type="button" wire:click="backToTimes"
-                                class="link-underline text-sm font-medium text-brand">
+                                class="link-underline text-sm font-medium text-ink">
                             Change the time
                         </button>
                     </div>
@@ -277,7 +277,7 @@
                         {{-- The one place a guest is stopped. The chosen slot is
                              already parked in the session, so they come back to
                              exactly this point. --}}
-                        <div class="flex flex-col gap-4 rounded-xl border border-line bg-paper-shade p-5">
+                        <div class="flex flex-col gap-4 rounded-[3px] border border-line bg-paper-shade p-5">
                             <div class="flex flex-col gap-1">
                                 <h3 class="font-semibold text-ink">Sign in to confirm</h3>
                                 <p class="text-[0.9375rem] leading-relaxed text-muted">
@@ -293,8 +293,8 @@
                         </div>
                     @else
                         <div class="flex flex-col gap-4">
-                            <div class="flex items-center gap-3 rounded-xl border border-line bg-paper-shade p-4">
-                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-soft font-semibold text-brand" aria-hidden="true">
+                            <div class="flex items-center gap-3 rounded-[3px] border border-line bg-paper-shade p-4">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-[3px] bg-brass-soft font-semibold text-ink" aria-hidden="true">
                                     {{ $patient->initials() }}
                                 </span>
                                 <div class="flex min-w-0 flex-col">
@@ -311,7 +311,7 @@
                                           wire:model="notes"
                                           rows="3"
                                           placeholder="For example: I have been short of breath climbing stairs."
-                                          class="w-full resize-y rounded-xl border border-line-strong bg-surface px-4 py-3 text-ink placeholder:text-muted/60 focus:border-brand focus:outline-2 focus:outline-offset-2 focus:outline-accent/40"></textarea>
+                                          class="w-full resize-y rounded-[3px] border border-line-strong bg-surface px-4 py-3 text-ink placeholder:text-muted/60 focus:border-brass focus:outline-2 focus:outline-offset-2 focus:outline-brass/40"></textarea>
                                 @error('notes') <p class="text-sm text-negative">{{ $message }}</p> @enderror
                             </div>
 
@@ -345,15 +345,15 @@
                         @foreach ($this->gateways() as $driver)
                             <label wire:key="gateway-{{ $driver->name() }}"
                                    @class([
-                                       'flex cursor-pointer items-start gap-3 rounded-xl border p-4 transition-colors',
-                                       'border-brand bg-brand-soft' => $gateway === $driver->name(),
+                                       'flex cursor-pointer items-start gap-3 rounded-[3px] border p-4 transition-colors',
+                                       'border-brass bg-brass-soft' => $gateway === $driver->name(),
                                        'border-line hover:border-line-strong hover:bg-paper-shade' => $gateway !== $driver->name(),
                                    ])>
                                 <input type="radio"
                                        wire:model.live="gateway"
                                        value="{{ $driver->name() }}"
                                        name="gateway"
-                                       class="mt-1 size-4 border-line-strong text-brand focus:outline-2 focus:outline-offset-2 focus:outline-accent/40">
+                                       class="mt-1 size-4 border-line-strong text-ink focus:outline-2 focus:outline-offset-2 focus:outline-brass/40">
 
                                 <span class="flex flex-col gap-0.5">
                                     <span class="font-semibold text-ink">{{ $driver->label() }}</span>

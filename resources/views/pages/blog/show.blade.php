@@ -39,7 +39,7 @@
     <article class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
 
         <nav class="mb-6 flex items-center gap-2 text-sm text-muted" aria-label="Breadcrumb">
-            <a href="{{ route('blog.index') }}" class="link-underline hover:text-brand">Articles</a>
+            <a href="{{ route('blog.index') }}" class="link-underline hover:text-brass">Articles</a>
             <span aria-hidden="true">/</span>
             <span class="truncate text-ink">{{ $post->title }}</span>
         </nav>
@@ -61,7 +61,7 @@
         @if ($cover = $post->coverUrl())
             <img src="{{ $cover }}"
                  alt=""
-                 class="mt-8 aspect-[16/9] w-full rounded-2xl object-cover shadow-lift"
+                 class="mt-8 aspect-[16/9] w-full rounded-[4px] object-cover shadow-lift"
                  data-reveal="80">
         @endif
 
@@ -76,7 +76,7 @@
 
         <footer class="mt-12 flex flex-col gap-6 border-t border-line pt-8">
             <div class="flex flex-wrap items-center justify-between gap-4">
-                <a href="{{ route('blog.index') }}" class="link-underline font-semibold text-brand">
+                <a href="{{ route('blog.index') }}" class="link-underline font-semibold text-ink">
                     ← All articles
                 </a>
 
@@ -85,7 +85,7 @@
                 @endif
             </div>
 
-            <p class="rounded-xl border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
+            <p class="rounded-[3px] border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
                 This article is general information, not advice about your own health.
                 Please speak to {{ $doctor->name }} about anything that concerns you.
             </p>

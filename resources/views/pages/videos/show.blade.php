@@ -40,7 +40,7 @@
 
         {{-- Breadcrumb --}}
         <nav class="mb-6 flex items-center gap-2 text-sm text-muted" aria-label="Breadcrumb">
-            <a href="{{ route('videos.index') }}" class="link-underline hover:text-brand">Health videos</a>
+            <a href="{{ route('videos.index') }}" class="link-underline hover:text-brass">Health videos</a>
             <span aria-hidden="true">/</span>
             <span class="truncate text-ink">{{ $video->title }}</span>
         </nav>
@@ -69,7 +69,7 @@
 
                     @if ($watchUrl = $video->watchUrl())
                         <a href="{{ $watchUrl }}" target="_blank" rel="noopener noreferrer"
-                           class="link-underline hover:text-brand">
+                           class="link-underline hover:text-brass">
                             Watch on {{ Str::headline($video->video_type->value) }}
                         </a>
                     @endif
@@ -85,7 +85,7 @@
             {{-- Medical disclaimer. Worth stating plainly on any page where a
                  patient might mistake general information for advice about
                  their own case. --}}
-            <p class="rounded-xl border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
+            <p class="rounded-[3px] border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
                 This video is general information, not advice about your own health.
                 Please speak to {{ $doctor->name }} about anything that concerns you.
             </p>

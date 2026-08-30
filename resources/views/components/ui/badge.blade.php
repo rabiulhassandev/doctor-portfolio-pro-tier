@@ -3,34 +3,36 @@
 
         <x-ui.badge>Cardiology</x-ui.badge>
         <x-ui.badge tone="positive" dot>Confirmed</x-ui.badge>
+        <x-ui.badge tone="brass">Featured</x-ui.badge>
 
-    The tones map onto the status colours in config/site.php, which are
-    deliberately muted: a booking confirmation in signal green next to this
-    palette reads as a system alert rather than as a clinic.
+    Square-ish and letterspaced, matching the buttons. The status tones are
+    muted on purpose: a booking confirmation in signal green next to this
+    palette looks like a system alert, not a clinic.
 --}}
 
 @props([
-    // neutral | brand | accent | positive | caution | negative
+    // neutral | brass | dark | light | positive | caution | negative
     'tone' => 'neutral',
-    // Show a small filled circle before the label.
     'dot' => false,
 ])
 
 @php
     $tones = [
         'neutral' => ['chip' => 'border-line bg-paper-shade text-muted', 'dot' => 'bg-muted'],
-        'brand' => ['chip' => 'border-brand/15 bg-brand-soft text-brand', 'dot' => 'bg-brand'],
-        'accent' => ['chip' => 'border-accent/20 bg-accent-soft text-accent', 'dot' => 'bg-accent'],
-        'positive' => ['chip' => 'border-positive/20 bg-positive-soft text-positive', 'dot' => 'bg-positive'],
-        'caution' => ['chip' => 'border-caution/20 bg-caution-soft text-caution', 'dot' => 'bg-caution'],
-        'negative' => ['chip' => 'border-negative/20 bg-negative-soft text-negative', 'dot' => 'bg-negative'],
+        'brass'   => ['chip' => 'border-brass/40 bg-brass-soft text-ink', 'dot' => 'bg-brass'],
+        'dark'    => ['chip' => 'border-night-line bg-night text-white', 'dot' => 'bg-brass'],
+        // For use on the dark sections, over photography or night panels.
+        'light'   => ['chip' => 'border-white/20 bg-white/10 text-white', 'dot' => 'bg-brass'],
+        'positive'=> ['chip' => 'border-positive/25 bg-positive-soft text-positive', 'dot' => 'bg-positive'],
+        'caution' => ['chip' => 'border-caution/25 bg-caution-soft text-caution', 'dot' => 'bg-caution'],
+        'negative'=> ['chip' => 'border-negative/25 bg-negative-soft text-negative', 'dot' => 'bg-negative'],
     ];
 
     $style = $tones[$tone] ?? $tones['neutral'];
 @endphp
 
 <span {{ $attributes->class([
-    'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold leading-none',
+    'inline-flex items-center gap-1.5 rounded-[3px] border px-2.5 py-1 text-[0.6875rem] font-semibold uppercase leading-none tracking-[0.1em]',
     $style['chip'],
 ]) }}>
     @if ($dot)

@@ -18,46 +18,45 @@
     'intendedSlot' => null,
 ])
 
-<div class="relative isolate overflow-hidden">
-    {{-- Two very soft blooms. The auth screens have almost no content, and a
-         flat expanse of paper behind one small card looks unfinished. --}}
-    <div class="pointer-events-none absolute inset-0 -z-10"
-         style="background:
-            radial-gradient(36rem 24rem at 15% 0%, color-mix(in oklab, var(--brand-primary) 12%, transparent), transparent 65%),
-            radial-gradient(32rem 22rem at 88% 100%, color-mix(in oklab, var(--brand-accent) 12%, transparent), transparent 65%);"
-         aria-hidden="true"></div>
+{{-- Full-height dark. Signing in is the one screen with nothing else on it,
+     so it gets the site's most atmospheric treatment. --}}
+<div class="surface-grain relative isolate min-h-screen overflow-hidden bg-night">
+    <div class="hero-glow -z-10" aria-hidden="true"></div>
 
-    <div class="mx-auto grid max-w-6xl gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-16">
+    <div class="mx-auto grid max-w-6xl gap-12 px-5 pb-16 pt-32 sm:px-8 sm:pb-24 sm:pt-40 lg:grid-cols-[minmax(0,1fr)_26rem] lg:items-center lg:gap-20">
 
         {{-- Reassurance column. Hidden on phones, where it would push the form
              below the fold — the form is what people came for. --}}
-        <div class="hidden flex-col gap-6 lg:flex" data-reveal>
-            <div class="flex flex-col gap-3">
-                <p class="eyebrow">Patient account</p>
-                <h2 class="max-w-lg text-4xl text-ink">
+        <div class="hidden flex-col gap-8 lg:flex" data-reveal>
+            <div class="flex flex-col gap-5">
+                <div class="flex items-center gap-3">
+                    <span class="rule-brass"></span>
+                    <p class="eyebrow eyebrow-light">Patient account</p>
+                </div>
+
+                <h2 class="max-w-lg text-5xl leading-[1.05] text-white">
                     Your appointments and reports, in one place.
                 </h2>
-                <p class="max-w-md text-lg leading-relaxed text-muted">
+
+                <p class="max-w-md text-lg leading-relaxed text-white/60">
                     An account lets you book a time that suits you, see what is coming up, and collect
                     your prescriptions without telephoning the chamber.
                 </p>
             </div>
 
-            <ul class="flex flex-col gap-4">
+            <ul class="flex flex-col divide-y divide-night-line border-y border-night-line">
                 @foreach ([
                     ['Book in seconds', 'Pick from the times actually free in the chamber — no waiting for a call back.'],
                     ['Everything in one place', 'Past visits, upcoming appointments and what you were prescribed.'],
-                    ['Collect your documents', 'Prescriptions and reports, ready to download whenever you need them.'],
+                    ['Collect your documents', 'Prescriptions and reports, ready whenever you need them.'],
                 ] as $index => [$heading, $body])
-                    <li class="flex items-start gap-3.5" data-reveal="{{ 80 * ($index + 1) }}">
-                        <span class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent" aria-hidden="true">
-                            <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.25" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                            </svg>
+                    <li class="flex items-start gap-4 py-4" data-reveal="{{ 80 * ($index + 1) }}">
+                        <span class="mt-1 font-display text-lg leading-none text-brass/70" aria-hidden="true">
+                            0{{ $index + 1 }}
                         </span>
                         <div class="flex flex-col gap-0.5">
-                            <p class="font-semibold text-ink">{{ $heading }}</p>
-                            <p class="text-[0.9375rem] leading-relaxed text-muted">{{ $body }}</p>
+                            <p class="font-semibold text-white">{{ $heading }}</p>
+                            <p class="text-[0.9375rem] leading-relaxed text-white/50">{{ $body }}</p>
                         </div>
                     </li>
                 @endforeach
@@ -95,7 +94,8 @@
             </x-ui.card>
 
             @if (isset($footer))
-                <p class="text-center text-[0.9375rem] text-muted">{{ $footer }}</p>
+                {{-- Sits on the dark, outside the card. --}}
+                <p class="text-center text-[0.9375rem] text-white/55">{{ $footer }}</p>
             @endif
         </div>
     </div>

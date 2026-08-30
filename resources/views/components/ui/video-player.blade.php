@@ -42,7 +42,7 @@
 @endphp
 
 <div x-data="{ playing: false }"
-     {{ $attributes->class('relative isolate aspect-video w-full overflow-hidden rounded-2xl bg-ink-deep') }}>
+     {{ $attributes->class('relative isolate aspect-video w-full overflow-hidden bg-night') }}>
 
     {{-- The poster --}}
     <button x-show="! playing"
@@ -60,14 +60,14 @@
             {{-- No thumbnail: a branded gradient built from config/site.php.
                  Looks deliberate; a broken image icon looks abandoned. --}}
             <span class="absolute inset-0"
-                  style="background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));"
+                  class="bg-night-soft"
                   aria-hidden="true"></span>
         @endif
 
         {{-- A wash under the button so it stays legible on a bright frame. --}}
-        <span class="absolute inset-0 bg-gradient-to-t from-ink-deep/70 via-ink-deep/20 to-transparent" aria-hidden="true"></span>
+        <span class="absolute inset-0 bg-gradient-to-t from-night/70 via-night/20 to-transparent" aria-hidden="true"></span>
 
-        <span class="relative flex size-16 items-center justify-center rounded-full bg-white/95 text-brand shadow-float transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110 sm:size-20"
+        <span class="relative flex size-16 items-center justify-center border border-white/60 bg-night/30 text-white backdrop-blur-sm transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:border-brass group-hover:text-brass sm:size-20"
               aria-hidden="true">
             <svg class="ml-1 size-7 sm:size-8" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5.14v13.72a1 1 0 001.54.84l10.5-6.86a1 1 0 000-1.68L9.54 4.3A1 1 0 008 5.14z" />
@@ -75,7 +75,7 @@
         </span>
 
         @if ($duration = $video->formattedDuration())
-            <span class="absolute bottom-3 right-3 rounded-md bg-ink-deep/80 px-2 py-1 text-xs font-semibold tabular-nums text-white">
+            <span class="absolute bottom-3 right-3 rounded-md bg-night/80 px-2 py-1 text-xs font-semibold tabular-nums text-white">
                 {{ $duration }}
             </span>
         @endif

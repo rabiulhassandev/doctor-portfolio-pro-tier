@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Widgets\PracticeOverview;
 use App\Models\Appointment;
 use App\Models\AvailabilityBlackout;
 use App\Models\AvailabilitySlot;
@@ -14,6 +15,7 @@ use App\Models\Payment;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Models\User;
+use Livewire\Livewire;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,6 +76,51 @@ describe('every screen renders', function () {
 
     it('renders the dashboard with its widgets', function () {
         $this->get('/admin')->assertOk();
+    });
+
+    it('dresses the panel in the admin palette, not the public one', function () {
+        /*
+         | The two palettes are deliberately different: a bright blue working
+         | tool here, a dark brass-accented website out there. This asserts the
+         | panel is actually wearing its own, because a rebrand that
+         | accidentally pointed both at one array would still render fine and
+         | just look wrong.
+         */
+        $response = $this->get('/admin')->assertOk();
+
+        $response->assertSee('--brand-canvas:'.config('site.admin.canvas'), escape: false)
+            ->assertSee('--brand-sidebar:'.config('site.admin.sidebar'), escape: false)
+            // The public site's brass must not appear anywhere in the panel.
+            ->assertDontSee(config('site.colors.brass'), escape: false);
+    });
+
+    it('shows the footer credit line', function () {
+        $this->get('/admin')
+            ->assertOk()
+            ->assertSee('admin-footer', escape: false)
+            ->assertSee(config('site.name'));
+    });
+
+    it('gives every dashboard stat the icon the theme enlarges', function () {
+        /*
+         | The big translucent mark on each blue card is Stat::icon(), pulled
+         | out of the label row and scaled up by theme.css. Without it every
+         | card is an anonymous blue rectangle.
+         |
+         | Asserted against the widget rather than the dashboard page, because
+         | Filament renders widgets as deferred Livewire components — they are
+         | not in the dashboard's first response at all.
+         */
+        $html = Livewire::test(PracticeOverview::class)
+            ->assertSee("Today's appointments")
+            ->assertSee('Waiting for confirmation')
+            ->html();
+
+        // Four cards, and an icon inside every one of them.
+        $cards = substr_count($html, 'fi-wi-stats-overview-stat-label-ctn');
+
+        expect($cards)->toBe(4)
+            ->and(substr_count($html, '<svg'))->toBeGreaterThanOrEqual($cards);
     });
 
     it('renders every list screen', function (string $path) {

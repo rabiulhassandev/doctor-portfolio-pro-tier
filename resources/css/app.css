@@ -12,14 +12,17 @@
 |
 | The Bengali face, declared here rather than in vite.config.js because it is
 | not on Bunny — it is a 2003 Ekushey-project font by Solaiman Karim, and the
-| files are committed under resources/fonts/. Vite fingerprints and bundles
-| them like any other asset, so they get the same long cache life as the rest.
+| files are committed under resources/fonts/.
+|
+| It stays regardless of what the Latin faces do: SolaimanLipi *is* the reading
+| font of the Bangladeshi web, and a patient here recognises it the way an
+| English reader recognises Times. There is no elegant alternative to swap in.
 |
 | It ships two weights, 400 and 700. Nothing else is declared on purpose: CSS
 | font matching resolves a request for 500 down to 400 and 600 up to 700, which
-| is a real face either way. Declaring 500 and 600 as aliases of 400 would make
-| the browser synthesise a fake bold instead, and a synthetic bold on a script
-| with a continuous headline stroke smears the matra.
+| is a real face either way. Declaring the intermediate weights as aliases would
+| make the browser synthesise a fake bold instead, and a synthetic bold on a
+| script with a continuous headline stroke smears the matra.
 |
 | `unicode-range` is the important line. SolaimanLipi contains Latin glyphs and
 | they are not good ones; restricting it to the Bengali block guarantees it is
@@ -28,17 +31,15 @@
 | Bengali conjuncts, the dotted circle that shows an orphaned diacritic, and the
 | danda — which lives in the Devanagari block but is the full stop in Bangla.
 |
-| `size-adjust` fixes an optical mismatch rather than a bug. Measured at 100px,
-| Source Sans 3 has a cap height of 67 and SolaimanLipi draws its Bengali body
-| — matra down to baseline — at 62. Set at the same font-size the Bangla
-| therefore reads a little small and light beside the English. 107% brings the
-| two into line. Adjust this if you change the Latin text face; it is a
-| relationship between two fonts, not a property of one.
+| `size-adjust` corrects an optical mismatch, and it is tuned to whatever Latin
+| face sits beside it. Manrope has a large x-height, so the Bengali needs less
+| lifting than it did against a smaller-bodied face: 102% rather than 107%.
+| Re-measure this if you change the body font.
 |
-| Licensing note for buyers: SolaimanLipi is distributed freely, but confirm
-| the current terms before redistributing it inside a commercial product. If in
-| doubt, delete these two @font-face blocks and the files in resources/fonts/ —
-| the system Bengali fallbacks in --font-bengali below take over cleanly.
+| Licensing note for buyers: SolaimanLipi is distributed freely, but confirm the
+| current terms before redistributing it inside a commercial product. If in
+| doubt, delete these two blocks and the files in resources/fonts/ — the system
+| Bengali fallbacks in --font-bengali below take over cleanly.
 |
 */
 
@@ -48,7 +49,7 @@
     font-weight: 400;
     font-display: swap;
     src: url('../fonts/solaimanlipi-400.woff2') format('woff2');
-    size-adjust: 107%;
+    size-adjust: 102%;
     unicode-range: U+0964-0965, U+0980-09FF, U+200C-200D, U+25CC;
 }
 
@@ -58,7 +59,7 @@
     font-weight: 700;
     font-display: swap;
     src: url('../fonts/solaimanlipi-700.woff2') format('woff2');
-    size-adjust: 107%;
+    size-adjust: 102%;
     unicode-range: U+0964-0965, U+0980-09FF, U+200C-200D, U+25CC;
 }
 
@@ -76,31 +77,35 @@
 */
 
 :root {
-    --brand-primary: #0f5c86;
-    --brand-primary-dark: #0a4363;
-    --brand-primary-light: #e6f2f8;
-    --brand-accent: #14a5a0;
-    --brand-accent-light: #e4f6f5;
-    --brand-ink: #16242e;
-    --brand-ink-deep: #101c24;
-    --brand-muted: #61727e;
-    --brand-paper: #fbfaf8;
-    --brand-paper-shade: #f4f2ee;
+    --brand-night: #0b1620;
+    --brand-night-soft: #132433;
+    --brand-night-line: #25384a;
+
+    --brand-brass: #c8a45c;
+    --brand-brass-bright: #dcbb77;
+    --brand-brass-soft: #f3eada;
+
+    --brand-paper: #f8f6f2;
+    --brand-paper-shade: #efebe3;
     --brand-surface: #ffffff;
-    --brand-line: #e4e0d9;
-    --brand-line-strong: #cfc9bf;
-    --brand-gold: #b08d57;
+
+    --brand-ink: #111c26;
+    --brand-muted: #5e6b78;
+
+    --brand-line: #e2dcd1;
+    --brand-line-strong: #cdc4b4;
+
     --brand-positive: #2f7a5a;
-    --brand-positive-light: #e6f3ec;
+    --brand-positive-light: #e4f1ea;
     --brand-caution: #a9741f;
-    --brand-caution-light: #fbf1de;
-    --brand-negative: #a33a34;
-    --brand-negative-light: #fbeceb;
+    --brand-caution-light: #faf0dc;
+    --brand-negative: #a83a34;
+    --brand-negative-light: #faebea;
 }
 
 /*
-| Tailwind theme tokens. Because each one points at a custom property, classes
-| like `bg-brand` and `text-accent` follow whatever config/site.php says.
+| Tailwind theme tokens. Each points at a custom property, so classes like
+| `bg-night` and `text-brass` follow whatever config/site.php says.
 */
 
 @theme {
@@ -110,13 +115,6 @@
      | is how people here actually write — then picks the right glyphs word by
      | word, with no markup and no `lang` attribute needed.
      |
-     | One Bengali face in both roles is deliberate. SolaimanLipi *is* the
-     | reading font of the Bangladeshi web, and a patient here recognises it the
-     | way an English reader recognises Times. Pairing a different, unfamiliar
-     | Bengali face with it for headings would buy typographic tidiness at the
-     | cost of the thing that actually matters, which is that the Bangla looks
-     | normal.
-     |
      | After it come the Bengali faces that ship with the major operating
      | systems, so a visitor who blocks webfonts still gets real Bangla instead
      | of a column of empty boxes.
@@ -125,38 +123,35 @@
         'SolaimanLipi', 'Nirmala UI', 'Kohinoor Bangla', 'Bangla MN', 'Noto Sans Bengali', 'Vrinda';
 
     --font-sans:
-        'Source Sans 3', var(--font-bengali), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Manrope', var(--font-bengali), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
         'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     /*
-     | Headings. Georgia is the last Latin fallback rather than a generic
-     | `serif` because it is on effectively every machine and its proportions
-     | are close enough that the page does not reflow noticeably while the
-     | webfont loads.
+     | Display. Georgia is the last Latin fallback rather than a generic
+     | `serif` because it is on effectively every machine — though it is a much
+     | sturdier face than Cormorant, so a visitor on the fallback sees a
+     | noticeably heavier headline. That is the right trade: heavy beats absent.
      */
-    --font-display: 'Newsreader', var(--font-bengali), Georgia, 'Times New Roman', serif;
+    --font-display: 'Cormorant Garamond', var(--font-bengali), Georgia, 'Times New Roman', serif;
 
-    --color-brand: var(--brand-primary);
-    --color-brand-dark: var(--brand-primary-dark);
-    --color-brand-soft: var(--brand-primary-light);
-    --color-accent: var(--brand-accent);
-    --color-accent-soft: var(--brand-accent-light);
-    --color-ink: var(--brand-ink);
-    --color-ink-deep: var(--brand-ink-deep);
-    --color-muted: var(--brand-muted);
+    --color-night: var(--brand-night);
+    --color-night-soft: var(--brand-night-soft);
+    --color-night-line: var(--brand-night-line);
+
+    --color-brass: var(--brand-brass);
+    --color-brass-bright: var(--brand-brass-bright);
+    --color-brass-soft: var(--brand-brass-soft);
 
     --color-paper: var(--brand-paper);
     --color-paper-shade: var(--brand-paper-shade);
     --color-surface: var(--brand-surface);
+
+    --color-ink: var(--brand-ink);
+    --color-muted: var(--brand-muted);
+
     --color-line: var(--brand-line);
     --color-line-strong: var(--brand-line-strong);
-    --color-gold: var(--brand-gold);
 
-    /*
-     | Status colours. The Pro tier shows appointment and payment states to
-     | patients, and a state needs to read as information rather than as
-     | decoration — hence muted rather than signal colours.
-     */
     --color-positive: var(--brand-positive);
     --color-positive-soft: var(--brand-positive-light);
     --color-caution: var(--brand-caution);
@@ -170,18 +165,18 @@
      | One wide soft blur is the giveaway of a template — it reads as a drop
      | shadow rather than as light. Each of these stacks a tight contact shadow
      | under a wider ambient one, which is how a real object sits on a surface.
-     | They are also tinted with the ink rather than pure black, so they sit on
-     | warm paper without going grey.
+     | Tinted with the ink rather than pure black, so they sit on warm paper
+     | without going grey.
      */
     --shadow-card:
-        0 1px 2px -1px rgb(22 36 46 / 0.06),
-        0 4px 12px -4px rgb(22 36 46 / 0.06);
+        0 1px 2px -1px rgb(17 28 38 / 0.07),
+        0 4px 14px -6px rgb(17 28 38 / 0.08);
     --shadow-lift:
-        0 2px 4px -2px rgb(22 36 46 / 0.08),
-        0 12px 28px -8px rgb(22 36 46 / 0.10);
+        0 2px 4px -2px rgb(17 28 38 / 0.09),
+        0 14px 32px -10px rgb(17 28 38 / 0.13);
     --shadow-float:
-        0 4px 8px -4px rgb(22 36 46 / 0.10),
-        0 24px 48px -16px rgb(22 36 46 / 0.16);
+        0 4px 8px -4px rgb(17 28 38 / 0.12),
+        0 28px 56px -18px rgb(17 28 38 / 0.22);
 
     /* Slow, small, and out of the way. See the motion note further down. */
     --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
@@ -195,11 +190,10 @@
 
 @layer base {
     html {
-        /* Smooth scrolling for the in-page anchor links. */
         scroll-behavior: smooth;
-        /* Stop the sticky navbar from covering an anchored heading. */
+        /* Stop the fixed navbar from covering an anchored heading. */
         scroll-padding-top: 7rem;
-        background-color: var(--brand-paper);
+        background-color: var(--brand-night);
     }
 
     /* Respect the visitor's "reduce motion" setting — some people get motion
@@ -222,8 +216,8 @@
         background-color: var(--brand-paper);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        /* Body copy a shade larger and more open than Tailwind's default. A
-           patient reading about their own heart is not skimming a dashboard. */
+        /* A shade larger and more open than Tailwind's default. A patient
+           reading about their own heart is not skimming a dashboard. */
         font-size: 1.0625rem;
         line-height: 1.7;
         font-variant-numeric: proportional-nums;
@@ -232,43 +226,52 @@
     /*
      | Display type.
      |
-     | Newsreader has a large x-height, so it reads bigger and heavier than a
-     | high-contrast display serif at the same pixel size. The tracking is
-     | therefore gentle and the leading a little looser: tight tracking that
-     | flatters thin hairlines only clogs up a sturdier face.
+     | Cormorant is a small-bodied, high-contrast face. Two consequences drive
+     | everything below:
      |
-     | The upside is that this stack survives small. Service titles, article
-     | titles and the figures in the stats band all sit between 20px and 34px,
-     | and a true display serif comes apart down there.
+     |   * It needs SIZE. Set at 24px it looks weedy; set at 56px the hairlines
+     |     become the point. So the display stack is reserved for h1 and h2 and
+     |     the scale starts high.
+     |   * It needs weight 300, not 400. At large sizes the lighter cut has
+     |     more contrast between thick and thin, which is the whole reason to
+     |     use this face rather than a workhorse serif.
+     |
+     | Positive tracking, unusually. Tight tracking suits a sturdy face; on a
+     | delicate one it closes up the counters and turns a headline into a
+     | texture. A hair of extra space is what makes it read as set rather than
+     | as typed.
      */
     .font-display,
     h1,
     h2 {
         font-family: var(--font-display);
-        font-weight: 400;
-        letter-spacing: -0.01em;
-        line-height: 1.12;
+        font-weight: 300;
+        letter-spacing: 0.005em;
+        line-height: 1.06;
         text-wrap: balance;
     }
 
     /*
-     | Bengali does not take negative tracking at all — the script is joined
-     | along a headline stroke (matra), and pulling the letters together closes
-     | up the counters. `:lang()` catches a whole Bangla heading; the mixed case
-     | is handled by the tracking being mild enough not to hurt either way.
+     | Bengali does not take Latin tracking at all — the script is joined along
+     | a headline stroke (matra), and spacing the letters breaks it visually.
+     | It also has no business being set in Cormorant, which has no Bengali:
+     | the stack falls through to SolaimanLipi, and that face wants its own
+     | line height.
      */
     :lang(bn) {
         letter-spacing: normal;
+        line-height: 1.4;
     }
 
-    /* h3 and below stay in the sans: they sit close to body copy, where the
-       serif's thin strokes start to fight the text around them. */
+    /* h3 and below stay in the sans. Cormorant at these sizes would be
+       illegible, and the contrast between a serif h2 and a sans h3 is a
+       useful hierarchy signal in itself. */
     h3,
     h4,
     h5,
     h6 {
         font-weight: 600;
-        letter-spacing: -0.01em;
+        letter-spacing: -0.011em;
         text-wrap: balance;
     }
 
@@ -276,15 +279,16 @@
         text-wrap: pretty;
     }
 
-    /* Visible keyboard focus everywhere — required for accessible navigation. */
+    /* Visible keyboard focus everywhere — required for accessible navigation.
+       Brass rather than a browser default so it belongs to the design. */
     :focus-visible {
-        outline: 2px solid var(--brand-accent);
+        outline: 2px solid var(--brand-brass);
         outline-offset: 3px;
         border-radius: 2px;
     }
 
     ::selection {
-        background-color: color-mix(in oklab, var(--brand-accent) 22%, transparent);
+        background-color: color-mix(in oklab, var(--brand-brass) 30%, transparent);
         color: var(--brand-ink);
     }
 
@@ -307,8 +311,8 @@
     | Scroll reveal
     |
     | Elements marked `data-reveal` start slightly faded and lowered; an
-    | IntersectionObserver adds the `is-revealed` class when they scroll into
-    | view. See resources/js/app.js.
+    | IntersectionObserver adds `is-revealed` when they scroll into view.
+    | See resources/js/app.js.
     |
     | The travel is deliberately short — 0.5rem, not the 2rem a template
     | usually uses. Content that visibly flies in draws attention to the
@@ -317,17 +321,15 @@
     | The starting state is wrapped in `scripting: enabled` on purpose. The
     | class that reveals these elements can only ever be added by JavaScript, so
     | without that guard a visitor with scripting turned off gets a site with no
-    | content on it at all. Browsers too old to understand the query skip the
-    | block and show everything immediately, which is the right fallback either
-    | way.
+    | content on it at all.
     */
     @media (scripting: enabled) {
         [data-reveal] {
             opacity: 0;
             transform: translateY(0.5rem);
             transition:
-                opacity 0.6s var(--ease-out-soft),
-                transform 0.6s var(--ease-out-soft);
+                opacity 0.7s var(--ease-out-soft),
+                transform 0.7s var(--ease-out-soft);
         }
     }
 
@@ -344,136 +346,81 @@
     }
 
     /*
-    | The small letterspaced line above a heading. Used often enough, and with
-    | enough fiddly values, to be worth naming.
+    | The small letterspaced line above a heading.
+    |
+    | Wide tracking is doing real work here: at this size it reads as a label
+    | rather than as shouted text, and it is the one place uppercase is allowed.
     */
     .eyebrow {
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
         font-weight: 600;
         line-height: 1;
-        letter-spacing: 0.18em;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         color: var(--brand-muted);
     }
 
+    /* The same, for use on the dark sections. */
+    .eyebrow-light {
+        color: color-mix(in oklab, var(--brand-brass) 85%, white);
+    }
+
     /*
-    | A barely-there paper grain.
+    | The brass rule that sits under an eyebrow or beside a heading.
     |
-    | Applied to the two or three large flat panels on the site. At 3.5% opacity
-    | nobody will ever consciously see it; what they see is that a big field of
-    | colour has some life in it instead of looking like a filled rectangle.
-    | The texture is a single inline SVG turbulence, so it costs no request.
+    | A short, thin, definite line. It is the cheapest possible signal that
+    | somebody chose where things go, and it appears once per section.
+    */
+    .rule-brass {
+        display: block;
+        width: 2.5rem;
+        height: 1px;
+        background-color: var(--brand-brass);
+    }
+
+    /*
+    | A barely-there grain.
+    |
+    | Applied to the large dark panels. At 4% nobody consciously sees it; what
+    | they see is that a big field of near-black has some life in it instead of
+    | looking like a filled rectangle. A single inline SVG turbulence, so it
+    | costs no request.
     */
     .surface-grain::before {
         content: '';
         position: absolute;
         inset: 0;
         pointer-events: none;
-        opacity: 0.035;
+        opacity: 0.04;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
     }
 
     /*
-    | Article body styling for the rich text the doctor writes in the admin
-    | panel. Tailwind's typography plugin does the heavy lifting; these lines
-    | just pull it into the brand palette and put the headings in the serif.
-    */
-    .prose-article {
-        @apply prose prose-lg max-w-none;
-        --tw-prose-body: var(--brand-ink);
-        --tw-prose-headings: var(--brand-ink);
-        --tw-prose-links: var(--brand-primary);
-        --tw-prose-bold: var(--brand-ink);
-        --tw-prose-quotes: var(--brand-ink);
-        --tw-prose-quote-borders: var(--brand-accent);
-        --tw-prose-bullets: var(--brand-accent);
-        --tw-prose-counters: var(--brand-muted);
-        --tw-prose-hr: var(--brand-line);
-    }
-
-    .prose-article :is(h2, h3) {
-        font-family: var(--font-display);
-        font-weight: 400;
-        letter-spacing: -0.015em;
-    }
-
-    .prose-article h2 {
-        font-size: 2rem;
-        line-height: 1.15;
-    }
-
-    .prose-article h3 {
-        font-size: 1.5rem;
-        line-height: 1.25;
-    }
-
-    /* An opening line set larger, the way a magazine sets a standfirst. */
-    .prose-article > p:first-of-type {
-        font-size: 1.1875rem;
-        line-height: 1.65;
-        color: var(--brand-ink);
-    }
-
-    .prose-article blockquote {
-        font-family: var(--font-display);
-        font-style: normal;
-        font-size: 1.375rem;
-        line-height: 1.4;
-        font-weight: 400;
-    }
-
-    .prose-article a {
-        text-decoration-thickness: 1px;
-        text-underline-offset: 0.2em;
-    }
-
-    /*
-    |----------------------------------------------------------------------
-    | Pro-tier additions
-    |----------------------------------------------------------------------
-    */
-
-    /*
-    | The hero's slow drifting wash.
+    | Glass panel.
     |
-    | Two large, very soft radial blooms that move a few percent over half a
-    | minute. It is far too slow to read as an animation — what it does is stop
-    | the largest flat area on the site from looking like a printed rectangle,
-    | which is the single biggest tell of a template hero. Paused entirely under
-    | prefers-reduced-motion by the global rule further up.
+    | A translucent card sitting over photography or over the dark hero. The
+    | saturate() is what stops it looking like grey plastic — blurring alone
+    | washes the colour out of whatever is behind it.
+    |
+    | Only ever used over an image or the night background. Over flat paper it
+    | has nothing to refract and just looks like a slightly wrong grey.
     */
-    @keyframes brand-drift {
-        0%,
-        100% {
-            transform: translate3d(0, 0, 0) scale(1);
-        }
-        50% {
-            transform: translate3d(2%, -2%, 0) scale(1.06);
-        }
+    .glass {
+        background-color: color-mix(in oklab, var(--brand-night) 55%, transparent);
+        backdrop-filter: blur(14px) saturate(140%);
+        border: 1px solid color-mix(in oklab, white 14%, transparent);
     }
 
-    .hero-wash {
-        position: absolute;
-        inset: -20%;
-        pointer-events: none;
-        background:
-            radial-gradient(
-                38rem 26rem at 22% 18%,
-                color-mix(in oklab, var(--brand-accent) 16%, transparent),
-                transparent 70%
-            ),
-            radial-gradient(
-                34rem 24rem at 78% 76%,
-                color-mix(in oklab, var(--brand-primary) 18%, transparent),
-                transparent 70%
-            );
-        animation: brand-drift 32s var(--ease-out-soft) infinite;
+    .glass-light {
+        background-color: color-mix(in oklab, white 78%, transparent);
+        backdrop-filter: blur(14px) saturate(140%);
+        border: 1px solid color-mix(in oklab, white 60%, transparent);
     }
 
     /*
-    | Underline that grows from the left on hover. Used on navigation links and
-    | inline "read more" links. A colour change alone is easy to miss; a rule
-    | that draws itself is the smallest gesture that reliably registers.
+    | Underline that grows from the left on hover. Used on navigation and
+    | inline links. A colour change alone is easy to miss; a rule that draws
+    | itself is the smallest gesture that reliably registers.
     */
     .link-underline {
         position: relative;
@@ -483,12 +430,12 @@
         content: '';
         position: absolute;
         inset-inline: 0;
-        bottom: -0.15em;
+        bottom: -0.2em;
         height: 1px;
         background-color: currentColor;
         transform: scaleX(0);
         transform-origin: left;
-        transition: transform 0.35s var(--ease-out-soft);
+        transition: transform 0.4s var(--ease-out-soft);
     }
 
     .link-underline:hover::after,
@@ -498,15 +445,14 @@
     }
 
     /*
-    | The standard card lift. Kept here rather than repeated as a class string
-    | on every card, because "how much does a card move" is a decision the whole
-    | site should make once.
+    | The standard card lift. Defined once so "how much does a card move" is a
+    | decision the whole site makes together.
     */
     .card-lift {
         transition:
-            transform 0.35s var(--ease-out-soft),
-            box-shadow 0.35s var(--ease-out-soft),
-            border-color 0.35s var(--ease-out-soft);
+            transform 0.45s var(--ease-out-soft),
+            box-shadow 0.45s var(--ease-out-soft),
+            border-color 0.45s var(--ease-out-soft);
     }
 
     .card-lift:hover {
@@ -514,9 +460,44 @@
     }
 
     /*
-    | Hides the scrollbar on the horizontally-scrolling date strip in the
-    | booking wizard, where a visible bar under seven date chips looks broken.
-    | The strip is still keyboard and wheel scrollable.
+    | A slow drift for the hero's ambient light. Far too slow to read as an
+    | animation; it exists so the largest dark area on the site is not a flat
+    | rectangle. Stopped entirely under prefers-reduced-motion, above.
+    */
+    @keyframes brass-drift {
+        0%,
+        100% {
+            transform: translate3d(0, 0, 0) scale(1);
+            opacity: 0.75;
+        }
+        50% {
+            transform: translate3d(3%, -2%, 0) scale(1.08);
+            opacity: 1;
+        }
+    }
+
+    .hero-glow {
+        position: absolute;
+        inset: -25%;
+        pointer-events: none;
+        background:
+            radial-gradient(
+                42rem 28rem at 68% 22%,
+                color-mix(in oklab, var(--brand-brass) 20%, transparent),
+                transparent 68%
+            ),
+            radial-gradient(
+                38rem 26rem at 12% 78%,
+                color-mix(in oklab, #2d5f7a 34%, transparent),
+                transparent 70%
+            );
+        animation: brass-drift 40s var(--ease-out-soft) infinite;
+    }
+
+    /*
+    | Hides the scrollbar on horizontally-scrolling strips — the booking date
+    | picker, the video topic chips, the patient account tabs — where a visible
+    | bar under a row of chips looks broken. Still keyboard and wheel scrollable.
     */
     .scrollbar-none {
         scrollbar-width: none;
@@ -525,5 +506,66 @@
 
     .scrollbar-none::-webkit-scrollbar {
         display: none;
+    }
+
+    /*
+    | Article body styling for the rich text the doctor writes in the admin
+    | panel. Tailwind's typography plugin does the heavy lifting; these lines
+    | pull it into the brand palette and set the headings in the display face.
+    */
+    .prose-article {
+        @apply prose prose-lg max-w-none;
+        --tw-prose-body: var(--brand-ink);
+        --tw-prose-headings: var(--brand-ink);
+        --tw-prose-links: var(--brand-ink);
+        --tw-prose-bold: var(--brand-ink);
+        --tw-prose-quotes: var(--brand-ink);
+        --tw-prose-quote-borders: var(--brand-brass);
+        --tw-prose-bullets: var(--brand-brass);
+        --tw-prose-counters: var(--brand-muted);
+        --tw-prose-hr: var(--brand-line);
+    }
+
+    .prose-article :is(h2, h3) {
+        font-family: var(--font-display);
+        font-weight: 400;
+        letter-spacing: 0.005em;
+    }
+
+    .prose-article h2 {
+        font-size: 2.375rem;
+        line-height: 1.1;
+    }
+
+    .prose-article h3 {
+        font-size: 1.5rem;
+        /* Back to the sans — see the note in the base layer. */
+        font-family: var(--font-sans);
+        font-weight: 600;
+        letter-spacing: -0.011em;
+        line-height: 1.3;
+    }
+
+    /* An opening line set larger, the way a magazine sets a standfirst. */
+    .prose-article > p:first-of-type {
+        font-size: 1.1875rem;
+        line-height: 1.65;
+    }
+
+    .prose-article blockquote {
+        font-family: var(--font-display);
+        font-style: normal;
+        font-weight: 300;
+        font-size: 1.75rem;
+        line-height: 1.25;
+        border-inline-start-width: 1px;
+    }
+
+    /* Brass underline on links, rather than a colour change — the palette has
+       only one accent and body copy is not where it should be spent. */
+    .prose-article a {
+        text-decoration-color: var(--brand-brass);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.22em;
     }
 }

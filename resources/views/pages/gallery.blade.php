@@ -40,17 +40,17 @@
                     @foreach ($images as $index => $image)
                         <button type="button"
                                 @click="open = {{ $index }}"
-                                class="group relative aspect-square overflow-hidden rounded-xl border border-line bg-paper-shade focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent"
+                                class="group relative aspect-square overflow-hidden rounded-[3px] border border-line bg-paper-shade focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass"
                                 data-reveal="{{ 40 * ($index % 4) }}">
                             <img src="{{ $image->imageUrl() }}"
                                  alt="{{ $image->altText() }}"
                                  loading="lazy"
                                  class="size-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105">
 
-                            <span class="absolute inset-0 bg-ink-deep/0 transition-colors duration-300 group-hover:bg-ink-deep/20" aria-hidden="true"></span>
+                            <span class="absolute inset-0 bg-night/0 transition-colors duration-300 group-hover:bg-night/20" aria-hidden="true"></span>
 
                             @if ($image->caption)
-                                <span class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-ink-deep/85 to-transparent p-3 text-left text-xs text-white transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0">
+                                <span class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-night/85 to-transparent p-3 text-left text-xs text-white transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0">
                                     {{ $image->caption }}
                                 </span>
                             @endif
@@ -76,7 +76,7 @@
                          x-transition:leave="transition ease-in duration-150"
                          x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                          @click="open = null"
-                         class="absolute inset-0 bg-ink-deep/92 backdrop-blur-sm"></div>
+                         class="absolute inset-0 bg-night/92 backdrop-blur-sm"></div>
 
                     <figure x-show="open !== null"
                             x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300"
@@ -86,7 +86,7 @@
                         <img x-show="open !== null"
                              :src="images[open]?.src"
                              :alt="images[open]?.alt"
-                             class="max-h-[74vh] w-auto rounded-xl object-contain shadow-float">
+                             class="max-h-[74vh] w-auto rounded-[3px] object-contain shadow-float">
 
                         <figcaption x-show="images[open]?.caption" x-text="images[open]?.caption"
                                     class="text-center text-sm text-white/80"></figcaption>
@@ -94,7 +94,7 @@
 
                     {{-- Controls --}}
                     <button type="button" @click="open = null"
-                            class="absolute right-4 top-4 z-20 flex size-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
+                            class="absolute right-4 top-4 z-20 flex size-11 items-center justify-center rounded-[3px] bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20"
                             aria-label="Close">
                         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -104,7 +104,7 @@
                     <template x-if="images.length > 1">
                         <div>
                             <button type="button" @click="previous()"
-                                    class="absolute left-3 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:left-6"
+                                    class="absolute left-3 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-[3px] bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:left-6"
                                     aria-label="Previous photograph">
                                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -112,7 +112,7 @@
                             </button>
 
                             <button type="button" @click="next()"
-                                    class="absolute right-3 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:right-6"
+                                    class="absolute right-3 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-[3px] bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 sm:right-6"
                                     aria-label="Next photograph">
                                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

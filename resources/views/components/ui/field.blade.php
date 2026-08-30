@@ -39,10 +39,16 @@
 
     $describedBy = trim(($hint ? $hintId : '') . ' ' . ($hasError ? $errorId : ''));
 
+    /*
+     | Square corners and a brass focus ring, matching the buttons. Inputs are
+     | the place a design most often forgets itself — a rounded pill field
+     | under a square button is the sort of mismatch nobody can name but
+     | everybody notices.
+     */
     $control = implode(' ', [
-        'w-full rounded-xl border bg-surface px-4 py-3 text-ink placeholder:text-muted/60',
+        'w-full rounded-[3px] border bg-surface px-4 py-3 text-ink placeholder:text-muted/55',
         'transition-colors duration-200',
-        'focus:border-brand focus:outline-2 focus:outline-offset-2 focus:outline-accent/40',
+        'focus:border-brass focus:outline-2 focus:outline-offset-2 focus:outline-brass/35',
         $hasError ? 'border-negative' : 'border-line-strong',
     ]);
 @endphp

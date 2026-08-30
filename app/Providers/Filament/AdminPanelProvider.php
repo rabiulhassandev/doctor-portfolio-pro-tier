@@ -48,11 +48,25 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->brandName(config('site.name'))
-            // The same typeface as the public site, self-hosted via Bunny
-            // rather than Google so the panel makes no request to an ad network.
-            ->font('Instrument Sans', provider: BunnyFontProvider::class)
+            /*
+             | Inter — a neutral interface face, and deliberately NOT either of
+             | the public site's fonts. A dense table of appointment times wants
+             | an even, unremarkable grotesque; the display serif that makes the
+             | public hero look considered would be actively unhelpful here.
+             |
+             | Self-hosted via Bunny rather than Google, so the panel makes no
+             | request to an ad network.
+             */
+            ->font('Inter', provider: BunnyFontProvider::class)
             ->colors([
-                'primary' => Color::hex(config('site.colors.primary')),
+                /*
+                 | The panel's blue comes from config/site.php's `admin` block,
+                 | which is a DIFFERENT palette from the public website's. The
+                 | public site is dark navy and brass; this is a bright working
+                 | tool. Trying to serve both from one palette makes a worse
+                 | job of each.
+                 */
+                'primary' => Color::hex(config('site.admin.primary')),
                 /*
                  | Filament tints its greys towards the primary hue when you let
                  | it. Slate keeps long appointment tables readable instead of
@@ -63,9 +77,15 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('favicon.ico'))
             ->darkMode(true)
             ->sidebarCollapsibleOnDesktop()
-            // Forms and tables breathe better than at Filament's default
-            // full-bleed width on a large clinic monitor.
-            ->maxContentWidth(Width::ScreenTwoExtraLarge)
+            /*
+             | Full width, unlike the public site.
+             |
+             | This is a working panel: the appointment table has eight columns
+             | and a receptionist wants all of them at once. Constraining it to
+             | a comfortable reading measure would be applying a rule from the
+             | wrong kind of page.
+             */
+            ->maxContentWidth(Width::Full)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             /*
              | Sections in the order the practice needs them: today's work
@@ -98,21 +118,46 @@ class AdminPanelProvider extends PanelProvider
                 TodaysAppointments::class,
             ])
             /*
-             | The rest of the brand palette, handed to the theme stylesheet as
+             | The rest of the admin palette, handed to the theme stylesheet as
              | CSS custom properties.
              |
              | Filament only generates variables for the colours passed to
-             | ->colors() above, and the theme needs the accent as well. Doing it
-             | here keeps theme.css free of hex codes, so a rebrand remains a
-             | change to config/site.php and nothing else.
+             | ->colors() above, and the theme needs the canvas, the sidebar and
+             | the tint as well. Doing it here keeps theme.css free of hex codes
+             | entirely, so a rebrand remains a change to config/site.php.
              */
             ->renderHook(
                 PanelsRenderHook::HEAD_END,
                 fn (): string => Blade::render(
-                    '<style>:root{--brand-accent:{{ $accent }};--brand-ink:{{ $ink }};}</style>',
+                    '<style>:root{'
+                    .'--brand-canvas:{{ $canvas }};'
+                    .'--brand-sidebar:{{ $sidebar }};'
+                    .'--brand-sidebar-ink:{{ $sidebarInk }};'
+                    .'--brand-tint:{{ $tint }};'
+                    .'}</style>',
                     [
-                        'accent' => config('site.colors.accent'),
-                        'ink' => config('site.colors.ink'),
+                        'canvas' => config('site.admin.canvas'),
+                        'sidebar' => config('site.admin.sidebar'),
+                        'sidebarInk' => config('site.admin.sidebar_ink'),
+                        'tint' => config('site.admin.brand_tint'),
+                    ],
+                ),
+            )
+            /*
+             | The centred credit line under the content, as in the reference
+             | design. Reads config/site.php so a reseller can set or remove it
+             | without touching a Blade file.
+             */
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): string => Blade::render(
+                    '<div class="admin-footer">&copy; {{ $year }} {{ $name }}'
+                    .'@if ($credit) <span aria-hidden="true">&mdash;</span> {!! $credit !!}@endif'
+                    .'</div>',
+                    [
+                        'year' => now()->year,
+                        'name' => config('site.name'),
+                        'credit' => config('site.credit'),
                     ],
                 ),
             )

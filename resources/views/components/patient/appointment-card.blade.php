@@ -37,7 +37,7 @@
         {{-- The date, set large. --}}
         <div @class([
             'flex w-20 shrink-0 flex-col items-center justify-center gap-0.5 border-r border-line px-3 py-5 text-center sm:w-24',
-            'bg-brand-soft text-brand' => ! $isPast && $appointment->status->isActive(),
+            'bg-brass-soft text-ink' => ! $isPast && $appointment->status->isActive(),
             'bg-paper-shade text-muted' => $isPast || ! $appointment->status->isActive(),
         ])>
             <span class="text-[0.6875rem] font-semibold uppercase tracking-[0.12em]">
@@ -85,7 +85,7 @@
 
         {{-- The chevron nudges on hover: the smallest hint that the whole card
              is a link, without animating the card itself. --}}
-        <div class="flex shrink-0 items-center pr-4 text-muted transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brand">
+        <div class="flex shrink-0 items-center pr-4 text-muted transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-brass">
             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
             </svg>

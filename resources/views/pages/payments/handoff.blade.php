@@ -13,7 +13,7 @@
 <x-layouts.app title="Taking you to payment" :hide-action-bar="true">
     <div class="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-6 px-5 py-20 text-center">
 
-        <span class="flex size-14 items-center justify-center rounded-full bg-brand-soft text-brand" aria-hidden="true">
+        <span class="flex size-14 items-center justify-center rounded-[3px] bg-brass-soft text-ink" aria-hidden="true">
             <svg class="size-7 animate-spin motion-reduce:animate-none" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" />
                 <path class="opacity-90" fill="currentColor"

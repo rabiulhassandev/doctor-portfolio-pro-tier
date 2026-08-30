@@ -52,34 +52,39 @@ class PracticeOverview extends StatsOverviewWidget
             ])
             ->sum('amount');
 
+        /*
+         | ->icon() is what the theme turns into the large translucent mark
+         | bleeding off the right of each card. It is deliberately not the same
+         | as ->descriptionIcon(), which stays small beside the supporting line.
+         |
+         | No ->color() anywhere: every card in this design is the same solid
+         | blue, and the theme sets it. Colour-coding four tiles that all mean
+         | "here is a number" only makes the one that matters harder to find.
+         */
         return [
             Stat::make("Today's appointments", (string) $todayCount)
+                ->icon('heroicon-o-calendar-days')
                 ->description($todayCount === 0
                     ? 'Nothing booked for today'
                     : $today->format('l, j F'))
-                ->descriptionIcon('heroicon-m-calendar-days')
-                ->color($todayCount > 0 ? 'primary' : 'gray')
                 ->url(AppointmentResource::getUrl('index', ['activeTab' => 'today'])),
 
             Stat::make('Waiting for confirmation', (string) $pendingCount)
+                ->icon('heroicon-o-clock')
                 ->description($pendingCount === 0
                     ? 'Everything is confirmed'
                     : 'Patients waiting to hear back')
                 ->descriptionIcon($pendingCount > 0 ? 'heroicon-m-exclamation-circle' : 'heroicon-m-check-circle')
-                // The only number here that is ever a call to action.
-                ->color($pendingCount > 0 ? 'warning' : 'success')
                 ->url(AppointmentResource::getUrl('index', ['activeTab' => 'pending'])),
 
             Stat::make('This week', (string) $weekCount)
+                ->icon('heroicon-o-chart-bar')
                 ->description($today->startOfWeek()->format('j M').' – '.$today->endOfWeek()->format('j M'))
-                ->descriptionIcon('heroicon-m-chart-bar')
-                ->color('info')
                 ->url(AppointmentResource::getUrl('index', ['activeTab' => 'upcoming'])),
 
             Stat::make('Paid this month', static::money($monthRevenue))
+                ->icon('heroicon-o-banknotes')
                 ->description('Online payments received in '.$today->format('F'))
-                ->descriptionIcon('heroicon-m-banknotes')
-                ->color('success')
                 ->url(PaymentResource::getUrl('index')),
         ];
     }

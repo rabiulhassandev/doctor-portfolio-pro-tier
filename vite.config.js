@@ -32,13 +32,30 @@ export default defineConfig({
              | Nothing puts these on the page unless the layout calls
              | {{ Vite::fonts() }} — see components/layouts/app.blade.php.
              */
+            /*
+             | The type pairing.
+             |
+             | Cormorant Garamond is a high-contrast old-style serif — thin
+             | hairlines, small x-height, a lot of elegance and very little
+             | robustness. It is used ONLY at display sizes, where the contrast
+             | reads as refinement; at body size it would be spidery and hard
+             | work. Weight 300 is the one that carries the large headlines;
+             | 600 exists for the rare short heading that needs weight.
+             |
+             | Manrope does everything else. Geometric, even-coloured, with a
+             | large x-height that stays legible reversed out of the dark
+             | sections — which is most of this site.
+             |
+             | The contrast between the two IS the design. A refined serif
+             | above a neutral sans is what separates a considered site from a
+             | template that set everything in one family.
+             */
             fonts: [
-                bunny('Source Sans 3', {
-                    weights: [400, 500, 600],
-                    styles: ['normal', 'italic'],
+                bunny('Manrope', {
+                    weights: [400, 500, 600, 700],
                 }),
-                bunny('Newsreader', {
-                    weights: [400],
+                bunny('Cormorant Garamond', {
+                    weights: [300, 400, 600],
                     styles: ['normal', 'italic'],
                 }),
             ],

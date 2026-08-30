@@ -17,7 +17,7 @@
                 @foreach ($services as $service)
                     <x-ui.card class="flex h-full flex-col gap-4" data-reveal="{{ 50 * ($loop->index % 3) }}">
                         @if ($service->icon)
-                            <span class="flex size-12 items-center justify-center rounded-xl bg-brand-soft text-brand" aria-hidden="true">
+                            <span class="flex size-12 items-center justify-center rounded-[3px] bg-brass-soft text-ink" aria-hidden="true">
                                 <x-dynamic-component :component="$service->icon" class="size-6" />
                             </span>
                         @endif

@@ -21,7 +21,7 @@
 
         <x-slot:footer>
             Remembered it?
-            <a href="{{ route('patient.login') }}" class="link-underline font-semibold text-brand">Sign in</a>
+            <a href="{{ route('patient.login') }}" class="link-underline font-semibold text-brass">Sign in</a>
         </x-slot:footer>
     </x-patient.auth-shell>
 </x-layouts.app>

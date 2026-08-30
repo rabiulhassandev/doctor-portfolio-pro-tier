@@ -29,7 +29,7 @@
                                 <p class="font-display text-3xl text-ink sm:text-4xl">
                                     {{ $local->format('j F Y') }}
                                 </p>
-                                <p class="text-lg font-semibold tabular-nums text-brand">
+                                <p class="text-lg font-semibold tabular-nums text-ink">
                                     {{ $appointment->timeLabel() }}
                                 </p>
                             </div>
@@ -102,7 +102,7 @@
                         </dl>
 
                         @if ($doctor->booking_instructions && $appointment->status->isActive())
-                            <div class="rounded-xl border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
+                            <div class="rounded-[3px] border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
                                 {{ $doctor->booking_instructions }}
                             </div>
                         @endif
@@ -117,8 +117,8 @@
 
                             @foreach ($appointment->documents as $document)
                                 <a href="{{ route('documents.download', $document) }}"
-                                   class="group flex items-center gap-3 rounded-xl border border-line p-3 transition-colors hover:border-line-strong hover:bg-paper-shade">
-                                    <span class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand" aria-hidden="true">
+                                   class="group flex items-center gap-3 rounded-[3px] border border-line p-3 transition-colors hover:border-line-strong hover:bg-paper-shade">
+                                    <span class="flex size-9 shrink-0 items-center justify-center rounded-[3px] bg-brass-soft text-ink" aria-hidden="true">
                                         <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                   d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -126,11 +126,11 @@
                                     </span>
 
                                     <span class="flex min-w-0 flex-1 flex-col">
-                                        <span class="truncate font-medium text-ink group-hover:text-brand">{{ $document->title }}</span>
+                                        <span class="truncate font-medium text-ink group-hover:text-brass">{{ $document->title }}</span>
                                         <span class="text-xs text-muted">{{ $document->kind->getLabel() }} · {{ $document->formattedSize() }}</span>
                                     </span>
 
-                                    <span class="text-sm font-semibold text-brand">Download</span>
+                                    <span class="text-sm font-semibold text-ink">Download</span>
                                 </a>
                             @endforeach
                         </div>

@@ -26,46 +26,53 @@
     ];
 @endphp
 
-<div class="border-b border-line bg-paper-shade">
-    <div class="mx-auto max-w-6xl px-5 pt-10 sm:px-8 sm:pt-12">
+{{-- The dark header band. Every page on this site opens dark — see the note
+     at the top of components/site/navbar.blade.php for why that is a rule. --}}
+<div class="surface-grain relative isolate overflow-hidden bg-night">
+    <div class="pointer-events-none absolute inset-0 -z-10"
+         style="background: radial-gradient(36rem 20rem at 85% 120%, color-mix(in oklab, var(--brand-brass) 14%, transparent), transparent 70%);"
+         aria-hidden="true"></div>
+
+    <div class="mx-auto max-w-6xl px-5 pt-32 sm:px-8 sm:pt-36">
 
         {{-- Greeting --}}
-        <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="flex flex-wrap items-start justify-between gap-4" data-reveal>
             <div class="flex items-center gap-4">
-                <span class="flex size-12 shrink-0 items-center justify-center rounded-full border border-brand/15 bg-brand-soft font-semibold text-brand"
+                <span class="flex size-12 shrink-0 items-center justify-center border border-brass/45 font-display text-lg leading-none text-brass"
                       aria-hidden="true">
                     {{ $patient->initials() }}
                 </span>
 
-                <div class="flex flex-col">
-                    <h1 class="text-2xl text-ink sm:text-3xl">{{ $title }}</h1>
+                <div class="flex flex-col gap-0.5">
+                    <h1 class="text-3xl text-white sm:text-4xl">{{ $title }}</h1>
                     @if ($subtitle)
-                        <p class="text-[0.9375rem] text-muted">{{ $subtitle }}</p>
+                        <p class="text-[0.9375rem] text-white/55">{{ $subtitle }}</p>
                     @endif
                 </div>
             </div>
 
             <form method="POST" action="{{ route('patient.logout') }}">
                 @csrf
-                <button type="submit" class="link-underline text-sm font-medium text-muted transition-colors hover:text-ink">
+                <button type="submit"
+                        class="link-underline text-[0.8125rem] font-medium uppercase tracking-[0.13em] text-white/55 transition-colors hover:text-white">
                     Sign out
                 </button>
             </form>
         </div>
 
         {{-- Tabs. Scroll sideways on a phone rather than wrapping onto two rows. --}}
-        <nav class="scrollbar-none -mb-px mt-8 flex gap-1 overflow-x-auto" aria-label="Your account">
+        <nav class="scrollbar-none -mb-px mt-10 flex gap-1 overflow-x-auto" aria-label="Your account">
             @foreach ($tabs as $tab)
                 @php $active = request()->routeIs($tab['route']); @endphp
 
                 <a href="{{ route($tab['route']) }}"
                    @if ($active) aria-current="page" @endif
                    @class([
-                       'flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-sm font-semibold transition-colors',
-                       'border-brand text-brand' => $active,
-                       'border-transparent text-muted hover:border-line-strong hover:text-ink' => ! $active,
+                       'flex shrink-0 items-center gap-2 border-b-2 px-4 py-3.5 text-[0.8125rem] font-semibold uppercase tracking-[0.11em] transition-colors',
+                       'border-brass text-brass' => $active,
+                       'border-transparent text-white/50 hover:border-white/25 hover:text-white' => ! $active,
                    ])>
-                    <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
+                    <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="{{ $tab['icon'] }}" />
                     </svg>
                     {{ $tab['label'] }}

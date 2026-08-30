@@ -17,8 +17,15 @@
     'description' => null,
     // Social-sharing image; falls back to the doctor's photo.
     'image' => null,
-    // Set on the home page, where the hero sits under a transparent navbar.
-    'transparentNav' => false,
+    /*
+     | Accepted but no longer used. The navbar is always dark and always
+     | transparent-until-scrolled, because every page now opens with a dark
+     | band — see the note at the top of components/site/navbar.blade.php.
+     |
+     | Kept as a prop so that pages passing it do not error, and so that anyone
+     | grepping for it finds this explanation rather than silence.
+     */
+    'transparentNav' => true,
     // Hide the floating action bar on pages that have their own sticky footer
     // (the booking wizard, mainly).
     'hideActionBar' => false,
@@ -80,20 +87,24 @@
     --}}
     <style>
         :root {
-            --brand-primary: {{ $colors['primary'] }};
-            --brand-primary-dark: {{ $colors['primary_dark'] }};
-            --brand-primary-light: {{ $colors['primary_light'] }};
-            --brand-accent: {{ $colors['accent'] }};
-            --brand-accent-light: {{ $colors['accent_light'] }};
-            --brand-ink: {{ $colors['ink'] }};
-            --brand-ink-deep: {{ $colors['ink_deep'] }};
-            --brand-muted: {{ $colors['muted'] }};
+            --brand-night: {{ $colors['night'] }};
+            --brand-night-soft: {{ $colors['night_soft'] }};
+            --brand-night-line: {{ $colors['night_line'] }};
+
+            --brand-brass: {{ $colors['brass'] }};
+            --brand-brass-bright: {{ $colors['brass_bright'] }};
+            --brand-brass-soft: {{ $colors['brass_soft'] }};
+
             --brand-paper: {{ $colors['paper'] }};
             --brand-paper-shade: {{ $colors['paper_shade'] }};
             --brand-surface: {{ $colors['surface'] }};
+
+            --brand-ink: {{ $colors['ink'] }};
+            --brand-muted: {{ $colors['muted'] }};
+
             --brand-line: {{ $colors['line'] }};
             --brand-line-strong: {{ $colors['line_strong'] }};
-            --brand-gold: {{ $colors['gold'] }};
+
             --brand-positive: {{ $colors['positive'] }};
             --brand-positive-light: {{ $colors['positive_light'] }};
             --brand-caution: {{ $colors['caution'] }};
@@ -102,9 +113,10 @@
             --brand-negative-light: {{ $colors['negative_light'] }};
         }
     </style>
-    {{-- The browser chrome on a phone picks this up, so it should match the top
-         of the page rather than shout the brand colour at it. --}}
-    <meta name="theme-color" content="{{ $colors['paper'] }}">
+    {{-- The browser chrome on a phone picks this up. The navbar is dark, so
+         this is the night colour rather than the page background — otherwise
+         the status bar and the header disagree at the top of the screen. --}}
+    <meta name="theme-color" content="{{ $colors['night'] }}">
 
     {{-- Alpine only hides x-cloak elements once it has booted; without this rule
          they flash on screen while the page is still loading. --}}
@@ -148,11 +160,11 @@
 <body class="bg-paper font-sans text-ink antialiased {{ $hideActionBar ? '' : 'pb-20 lg:pb-0' }}">
     {{-- Keyboard and screen-reader users can jump straight past the navigation. --}}
     <a href="#main"
-       class="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-[100] focus:rounded-full focus:bg-ink-deep focus:px-5 focus:py-2.5 focus:text-sm focus:text-white">
+       class="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-[100] focus:rounded-full focus:bg-night focus:px-5 focus:py-2.5 focus:text-sm focus:text-white">
         Skip to main content
     </a>
 
-    <x-site.navbar :transparent="$transparentNav" />
+    <x-site.navbar />
 
     <main id="main">
         {{ $slot }}

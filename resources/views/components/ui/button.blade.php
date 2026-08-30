@@ -3,22 +3,30 @@
 
     Every call to action goes through here, which is the difference between a
     site whose buttons agree with each other and one where each page invented
-    its own. (The Standard tier repeats the class string inline on every page;
-    this is the fix.)
+    its own.
 
-        <x-ui.button :href="route('booking')">Book an appointment</x-ui.button>
-        <x-ui.button variant="secondary" type="submit">Save</x-ui.button>
-        <x-ui.button variant="ghost" size="sm" icon="arrow-right">Read more</x-ui.button>
+        <x-ui.button :href="route('booking')">Book a consultation</x-ui.button>
+        <x-ui.button variant="brass" size="lg">Book</x-ui.button>
+        <x-ui.button variant="outline-light" :href="$tel">Call the chamber</x-ui.button>
+
+    ---------------------------------------------------------------------------
+    WHY THESE ARE SQUARE
+    ---------------------------------------------------------------------------
+
+    Fully-rounded pills read as friendly and app-like. This palette is aiming
+    at the opposite: considered, quiet, slightly formal. A 2px radius and wide
+    letterspacing on a small uppercase label does more for that than any amount
+    of colour would.
 
     Renders an <a> when given href, a <button> otherwise — so a link never
-    pretends to be a button or vice versa, which matters to screen readers and
-    to anyone middle-clicking.
+    pretends to be a button, which matters to screen readers and to anyone
+    middle-clicking.
 --}}
 
 @props([
     'href' => null,
-    // primary | secondary | ghost | danger | white
-    'variant' => 'primary',
+    // brass | dark | outline | outline-light | ghost | danger
+    'variant' => 'brass',
     // sm | md | lg
     'size' => 'md',
     'type' => 'button',
@@ -27,40 +35,45 @@
 ])
 
 @php
-    $base = 'group relative inline-flex items-center justify-center gap-2 rounded-full font-semibold '
-        . 'transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] '
-        . 'focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent '
-        . 'disabled:cursor-not-allowed disabled:opacity-55';
+    $base = 'group relative inline-flex items-center justify-center gap-2.5 rounded-[3px] '
+        . 'font-semibold uppercase tracking-[0.12em] '
+        . 'transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] '
+        . 'focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass '
+        . 'disabled:cursor-not-allowed disabled:opacity-50';
 
     $sizes = [
-        'sm' => 'px-4 py-2 text-sm',
-        'md' => 'px-6 py-3 text-[0.9375rem]',
-        'lg' => 'px-8 py-4 text-base',
+        'sm' => 'px-4 py-2.5 text-[0.6875rem]',
+        'md' => 'px-6 py-3.5 text-xs',
+        'lg' => 'px-8 py-4 text-[0.8125rem]',
     ];
 
     /*
-     | The lift is small — 1px, not 4. A button that jumps under the cursor
-     | draws attention to the animation; one that settles draws attention to
-     | itself. The shadow does most of the work.
+     | The lift is 1px, not 4. A button that jumps under the cursor draws
+     | attention to the animation; one that settles draws attention to itself.
      */
     $variants = [
-        'primary' => 'bg-brand text-white shadow-card hover:-translate-y-px hover:bg-brand-dark hover:shadow-lift',
+        // The primary action. Brass on near-black text — the only place the
+        // accent is used as a fill anywhere on the site.
+        'brass' => 'bg-brass text-night shadow-card hover:-translate-y-px hover:bg-brass-bright hover:shadow-lift',
 
-        'secondary' => 'border border-line-strong bg-surface text-ink shadow-card '
-            . 'hover:-translate-y-px hover:border-brand hover:text-brand hover:shadow-lift',
+        // For use on the light sections, where brass-on-paper would be weak.
+        'dark' => 'bg-night text-white shadow-card hover:-translate-y-px hover:bg-night-soft hover:shadow-lift',
 
-        'ghost' => 'text-brand hover:bg-brand-soft',
+        // Secondary, on light backgrounds.
+        'outline' => 'border border-line-strong text-ink hover:-translate-y-px hover:border-night hover:bg-night hover:text-white',
+
+        // Secondary, on the dark hero and footer.
+        'outline-light' => 'border border-white/25 text-white hover:-translate-y-px hover:border-brass hover:text-brass',
+
+        'ghost' => 'text-ink hover:text-brass',
 
         'danger' => 'bg-negative text-white shadow-card hover:-translate-y-px hover:shadow-lift',
-
-        // For use on the dark footer and on photographic heroes.
-        'white' => 'bg-white text-ink shadow-lift hover:-translate-y-px hover:shadow-float',
     ];
 
     $classes = implode(' ', [
         $base,
         $sizes[$size] ?? $sizes['md'],
-        $variants[$variant] ?? $variants['primary'],
+        $variants[$variant] ?? $variants['brass'],
         $block ? 'w-full' : '',
     ]);
 @endphp
@@ -72,7 +85,7 @@
         @if ($iconRight)
             {{-- Nudges forward on hover: the smallest possible hint that this
                  leads somewhere, without animating the whole button. --}}
-            <span class="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true">
+            <span class="transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" aria-hidden="true">
                 {!! $iconRight !!}
             </span>
         @endif
@@ -82,7 +95,7 @@
         {{ $slot }}
 
         @if ($iconRight)
-            <span class="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true">
+            <span class="transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" aria-hidden="true">
                 {!! $iconRight !!}
             </span>
         @endif

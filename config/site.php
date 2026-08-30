@@ -18,10 +18,18 @@
 | Tailwind classes in the Blade views read those variables — so changing a hex
 | code here restyles the whole public site without a rebuild.
 |
+| There are TWO palettes below, and they are deliberately different:
+|
+|   'colors' — the public website. Dark, photographic, brass-accented.
+|   'admin'  — the staff panel. Bright, blue, dense, built for working in.
+|
+| A patient should feel they have arrived somewhere considered. A receptionist
+| at six in the evening wants contrast and legibility, not atmosphere. Trying
+| to serve both with one palette makes a worse job of each.
+|
 | Anything a *developer* configures rather than a buyer — payment gateway keys,
 | the booking horizon, the clinic timezone, SMS drivers — lives in
-| config/booking.php instead. Keeping branding and operations apart means a
-| non-technical reseller can safely edit this file and nothing else.
+| config/booking.php instead.
 |
 */
 
@@ -43,71 +51,105 @@ return [
 
     /*
      | Path to the logo, relative to the `public/` directory. Leave it null to
-     | render the doctor's initials in a coloured circle instead — which looks
-     | deliberate rather than broken, so the demo site needs no artwork.
+     | render the doctor's initials in a brass-ruled square instead — which
+     | looks deliberate rather than broken, so the demo site needs no artwork.
      */
     'logo' => null,
 
     /*
     |--------------------------------------------------------------------------
-    | Colour palette
+    | Public website palette
     |--------------------------------------------------------------------------
     |
-    | A calm, clinical blue/teal scheme on warm paper. `primary` carries buttons
-    | and links; `accent` is used sparingly, for the things that should catch the
-    | eye and nothing else. Swap the hex codes and the whole public site follows.
+    | A dark, photographic scheme: deep navy carrying the hero, the calls to
+    | action and the footer, with brass as the single accent and a warm
+    | off-white for everything that has to be read at length.
     |
-    | The site is built on *paper*, not on white. A page of pure #ffffff panels
-    | separated by pale blue bands is the look of a template; a warm near-white
-    | with hairline rules is the look of a printed brochure, and that is the
-    | difference the palette below is chasing.
+    | The discipline that makes this work is restraint with the brass. It marks
+    | one thing per view — the primary action, the active navigation item, a
+    | rule under a heading — and nothing else. Brass on every heading, every
+    | icon and every border is how a luxury palette turns into a gaudy one.
+    |
+    | Long-form text (articles, the patient dashboard) sits on `paper`, not on
+    | `night`. A full page of body copy reversed out of near-black is hard work
+    | for anybody, and this site's readers are frequently older than average.
     |
     */
 
     'colors' => [
-        'primary' => '#0f5c86',        // Deep clinical blue — buttons, links.
-        'primary_dark' => '#0a4363',   // Hover state for primary.
-        'primary_light' => '#e6f2f8',  // Tinted panels, used sparingly.
-        'accent' => '#14a5a0',         // Teal — the one colour that draws the eye.
-        'accent_light' => '#e4f6f5',   // Tinted accent background.
-        'ink' => '#16242e',            // Body copy.
-        'muted' => '#61727e',          // Secondary copy.
+        /*
+         | The dark family. `night` is the hero, the footer and the closing
+         | call to action; `night_soft` is a panel raised off it; `night_line`
+         | is the hairline that separates them.
+         */
+        'night' => '#0B1620',          // The deepest surface. Hero, footer.
+        'night_soft' => '#132433',     // Raised panels on the dark.
+        'night_line' => '#25384A',     // Hairlines on the dark.
 
         /*
-         | Surfaces. `paper` is the page itself and `paper_shade` is the
-         | alternating band — the two are close enough that the change reads as
-         | a fold in the page rather than as a coloured stripe.
+         | Brass. The one colour that draws the eye, used once per view.
+         | Warm and slightly desaturated — a bright gold reads as a discount
+         | banner, not as a considered detail.
          */
-        'paper' => '#fbfaf8',          // Page background.
-        'paper_shade' => '#f4f2ee',    // Alternating sections.
-        'surface' => '#ffffff',        // Cards sitting on the paper.
+        'brass' => '#C8A45C',
+        'brass_bright' => '#DCBB77',   // Hover, and small text on dark.
+        'brass_soft' => '#F3EADA',     // Tinted panels on the light side.
+
+        /*
+         | The light family, for everything meant to be read at length.
+         | `paper` is warm rather than white — pure #ffffff beside near-black
+         | is glare, and the warmth is what stops the light sections feeling
+         | like a different website from the dark ones.
+         */
+        'paper' => '#F8F6F2',          // Page background on light sections.
+        'paper_shade' => '#EFEBE3',    // Alternating bands.
+        'surface' => '#FFFFFF',        // Cards sitting on the paper.
+
+        'ink' => '#111C26',            // Body copy on light.
+        'muted' => '#5E6B78',          // Secondary copy on light.
 
         /*
          | Hairlines. Borders are the detail that most gives a template away:
-         | a 1px mid-blue outline around every card reads as a wireframe. These
-         | two are barely-there warm greys, dark enough to describe an edge and
-         | light enough to stay out of the way.
+         | a 1px mid-grey outline around every card reads as a wireframe.
          */
-        'line' => '#e4e0d9',           // Default hairline.
-        'line_strong' => '#cfc9bf',    // Hover and emphasis.
-
-        'ink_deep' => '#101c24',       // The footer, and anything inverted.
-        'gold' => '#b08d57',           // Star ratings. Brass, not highlighter.
+        'line' => '#E2DCD1',
+        'line_strong' => '#CDC4B4',
 
         /*
-         | Status colours.
-         |
-         | The Pro tier shows appointment and payment states to patients, and
-         | those need to read as states rather than as decoration. They are
-         | muted on purpose — a booking confirmation in signal green next to
-         | this palette looks like a system alert, not like a clinic.
+         | Status colours. Muted on purpose — a booking confirmation in signal
+         | green next to this palette looks like a system alert, not a clinic.
          */
-        'positive' => '#2f7a5a',       // Confirmed, paid, open.
-        'positive_light' => '#e6f3ec',
-        'caution' => '#a9741f',        // Pending, awaiting payment.
-        'caution_light' => '#fbf1de',
-        'negative' => '#a33a34',       // Cancelled, failed.
-        'negative_light' => '#fbeceb',
+        'positive' => '#2F7A5A',
+        'positive_light' => '#E4F1EA',
+        'caution' => '#A9741F',
+        'caution_light' => '#FAF0DC',
+        'negative' => '#A83A34',
+        'negative_light' => '#FAEBEA',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin panel palette
+    |--------------------------------------------------------------------------
+    |
+    | Deliberately nothing like the public site. This is a working tool: a blue
+    | header bar, a white navigation column, a light grey canvas, and solid blue
+    | summary cards. Bright, high-contrast, and immediately legible.
+    |
+    | Only `primary` reaches Filament's own colour system; the rest are handed
+    | to resources/css/filament/admin/theme.css as CSS custom properties by
+    | AdminPanelProvider, so that stylesheet contains no hex codes at all and a
+    | rebrand stays a change to this file.
+    |
+    */
+
+    'admin' => [
+        'primary' => '#4F7FE8',        // Topbar, active states, stat cards.
+        'primary_dark' => '#3C67C6',   // Hover.
+        'sidebar' => '#FFFFFF',        // The navigation column.
+        'sidebar_ink' => '#3F4A57',    // Navigation labels.
+        'canvas' => '#F4F6F9',         // The page behind the cards.
+        'brand_tint' => '#EAF0FD',     // The logo block and active menu item.
     ],
 
     /*
@@ -167,7 +209,8 @@ return [
     | Footer credit
     |--------------------------------------------------------------------------
     |
-    | Shown in small print at the bottom of every page. Set to null to hide it.
+    | Shown in small print at the bottom of the public site and in the admin
+    | panel's footer. Set to null to hide it. HTML is allowed, so a link works.
     |
     */
 

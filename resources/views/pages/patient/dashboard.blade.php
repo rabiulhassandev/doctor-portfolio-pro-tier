@@ -15,7 +15,7 @@
 
                         @if ($upcoming->isNotEmpty())
                             <a href="{{ route('patient.appointments.index') }}"
-                               class="link-underline text-sm font-medium text-brand">See all</a>
+                               class="link-underline text-sm font-medium text-ink">See all</a>
                         @endif
                     </div>
 
@@ -55,14 +55,14 @@
 
                             @if ($documentCount > 4)
                                 <a href="{{ route('patient.documents.index') }}"
-                                   class="link-underline text-sm font-medium text-brand">All {{ $documentCount }}</a>
+                                   class="link-underline text-sm font-medium text-ink">All {{ $documentCount }}</a>
                             @endif
                         </div>
 
                         @forelse ($documents as $document)
                             <a href="{{ route('documents.download', $document) }}"
-                               class="group flex items-start gap-3 rounded-xl border border-line p-3 transition-colors hover:border-line-strong hover:bg-paper-shade">
-                                <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand" aria-hidden="true">
+                               class="group flex items-start gap-3 rounded-[3px] border border-line p-3 transition-colors hover:border-line-strong hover:bg-paper-shade">
+                                <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-[3px] bg-brass-soft text-ink" aria-hidden="true">
                                     <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                               d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -70,7 +70,7 @@
                                 </span>
 
                                 <span class="flex min-w-0 flex-1 flex-col">
-                                    <span class="truncate text-[0.9375rem] font-medium text-ink group-hover:text-brand">
+                                    <span class="truncate text-[0.9375rem] font-medium text-ink group-hover:text-brass">
                                         {{ $document->title }}
                                     </span>
                                     <span class="text-xs text-muted">
@@ -103,7 +103,7 @@
 
                         @if ($doctor->telHref())
                             <a href="{{ $doctor->telHref() }}"
-                               class="link-underline w-fit font-semibold text-brand">{{ $doctor->phone }}</a>
+                               class="link-underline w-fit font-semibold text-ink">{{ $doctor->phone }}</a>
                         @endif
 
                         @if (config('site.features.booking'))

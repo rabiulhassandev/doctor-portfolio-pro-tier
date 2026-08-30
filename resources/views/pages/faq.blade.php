@@ -63,13 +63,13 @@
                                      it opens without JavaScript, it is findable
                                      with the browser's own Find on Page, and
                                      screen readers already know what it is. --}}
-                                <details class="group rounded-2xl border border-line bg-surface shadow-card transition-colors open:border-line-strong">
-                                    <summary class="flex cursor-pointer list-none items-start justify-between gap-4 p-5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-accent">
-                                        <h3 class="text-[1.0625rem] font-semibold leading-snug text-ink transition-colors group-hover:text-brand">
+                                <details class="group rounded-[4px] border border-line bg-surface shadow-card transition-colors open:border-line-strong">
+                                    <summary class="flex cursor-pointer list-none items-start justify-between gap-4 p-5 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass">
+                                        <h3 class="text-[1.0625rem] font-semibold leading-snug text-ink transition-colors group-hover:text-brass">
                                             {{ $faq->question }}
                                         </h3>
 
-                                        <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-paper-shade text-muted transition-transform duration-300 group-open:rotate-45 group-open:bg-brand-soft group-open:text-brand"
+                                        <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-[3px] bg-paper-shade text-muted transition-transform duration-300 group-open:rotate-45 group-open:bg-brass-soft group-open:text-ink"
                                               aria-hidden="true">
                                             <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

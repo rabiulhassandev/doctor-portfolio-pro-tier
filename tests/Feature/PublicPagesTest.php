@@ -186,11 +186,26 @@ describe('SEO and structured data', function () {
 describe('branding', function () {
     it('injects the palette from config/site.php as CSS variables', function () {
         // This is what makes a rebrand a one-file change with no rebuild.
-        config()->set('site.colors.primary', '#123456');
+        config()->set('site.colors.night', '#123456');
+        config()->set('site.colors.brass', '#abcdef');
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('--brand-primary: #123456', escape: false);
+            ->assertSee('--brand-night: #123456', escape: false)
+            ->assertSee('--brand-brass: #abcdef', escape: false);
+    });
+
+    it('keeps the admin palette separate from the public one', function () {
+        /*
+         | The two are deliberately different — a dark brass-accented website
+         | and a bright blue working panel. A change to one must not leak into
+         | the other.
+         */
+        config()->set('site.admin.primary', '#0000ff');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('#0000ff', escape: false);
     });
 
     it('shows the WhatsApp button only when a number is set', function () {

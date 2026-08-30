@@ -21,7 +21,7 @@
                         real load on shared hosting for no benefit. --}}
                    wire:model.live.debounce.400ms="search"
                    placeholder="Search by condition or title…"
-                   class="w-full rounded-full border border-line-strong bg-surface py-3 pl-11 pr-4 text-ink placeholder:text-muted/60 focus:border-brand focus:outline-2 focus:outline-offset-2 focus:outline-accent/40">
+                   class="w-full rounded-[3px] border border-line-strong bg-surface py-3 pl-11 pr-4 text-ink placeholder:text-muted/60 focus:border-brass focus:outline-2 focus:outline-offset-2 focus:outline-brass/40">
 
             <div wire:loading wire:target="search"
                  class="absolute right-4 top-1/2 -translate-y-1/2 text-muted">
@@ -40,9 +40,9 @@
                 <button type="button"
                         wire:click="$set('topic', '')"
                         @class([
-                            'shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
-                            'border-brand bg-brand text-white' => $topic === '',
-                            'border-line bg-surface text-ink hover:border-brand hover:text-brand' => $topic !== '',
+                            'shrink-0 rounded-[3px] border px-4 py-2 text-sm font-semibold transition-colors',
+                            'border-brass bg-night text-white' => $topic === '',
+                            'border-line bg-surface text-ink hover:border-brass hover:text-brass' => $topic !== '',
                         ])>
                     All topics
                 </button>
@@ -52,9 +52,9 @@
                             wire:key="topic-{{ Str::slug($availableTopic) }}"
                             wire:click="$set('topic', @js($availableTopic))"
                             @class([
-                                'shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
-                                'border-brand bg-brand text-white' => $topic === $availableTopic,
-                                'border-line bg-surface text-ink hover:border-brand hover:text-brand' => $topic !== $availableTopic,
+                                'shrink-0 rounded-[3px] border px-4 py-2 text-sm font-semibold transition-colors',
+                                'border-brass bg-night text-white' => $topic === $availableTopic,
+                                'border-line bg-surface text-ink hover:border-brass hover:text-brass' => $topic !== $availableTopic,
                             ])>
                         {{ $availableTopic }}
                     </button>
