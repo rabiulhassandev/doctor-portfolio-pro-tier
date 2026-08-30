@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# The patient account area and the admin panel have nothing worth indexing,
+# and appointment pages carry a booking reference in the URL.
+Disallow: /patient/
+Disallow: /admin
+Disallow: /payments/
+
+# Update this to the real address before launch.
+Sitemap: http://localhost:8000/sitemap.xml

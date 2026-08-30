@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Patient;
 use App\Models\User;
 
 return [
@@ -37,10 +38,27 @@ return [
     |
     */
 
+    /*
+     | Two guards, two audiences, no shared surface.
+     |
+     |   web     — staff. Backs the Filament admin panel at /admin.
+     |   patient — the people who book appointments. Backs everything
+     |             under /patient, and nothing else.
+     |
+     | They use separate tables, separate session keys and separate password
+     | reset token pools, so a patient session can never satisfy an `auth`
+     | check on an admin route and vice versa. That separation is the whole
+     | security model of this tier; do not merge them to save a table.
+     */
     'guards' => [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        'patient' => [
+            'driver' => 'session',
+            'provider' => 'patients',
         ],
     ],
 
@@ -67,10 +85,10 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'patients' => [
+            'driver' => 'eloquent',
+            'model' => Patient::class,
+        ],
     ],
 
     /*
@@ -96,6 +114,18 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        /*
+         | Patients get their own token table. Sharing one with staff would
+         | mean a token issued for a patient address could be presented against
+         | a staff account that happens to use the same address.
+         */
+        'patients' => [
+            'provider' => 'patients',
+            'table' => 'patient_password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

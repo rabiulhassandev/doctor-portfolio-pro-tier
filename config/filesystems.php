@@ -38,11 +38,48 @@ return [
             'report' => false,
         ],
 
+        /*
+         | Everything the doctor uploads through the admin panel — the portrait,
+         | blog covers, gallery photos, video thumbnails, self-hosted videos.
+         |
+         | The URL is deliberately root-relative ('/storage') rather than built
+         | from APP_URL. A buyer who forgets to update APP_URL after moving to
+         | their real domain would otherwise get every image pointing back at
+         | localhost, and images that 404 only in production are a miserable
+         | thing to debug. Root-relative always resolves against whatever host
+         | actually served the page. App\Support\Media::absoluteUrl() adds the
+         | scheme and host for the handful of places that genuinely need it
+         | (og:image and the schema.org blocks).
+         |
+         | Requires `php artisan storage:link` once per install.
+         */
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => '/storage',
             'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        /*
+         | Prescriptions, lab reports and invoices.
+         |
+         | These are patient health records. They live OUTSIDE public/, are not
+         | reachable through the storage symlink, and have no URL at all. The
+         | only way to one is App\Http\Controllers\MedicalDocumentController,
+         | which authorises every single request.
+         |
+         | 'serve' => false is load-bearing, not cosmetic. Laravel auto-registers
+         | a /storage/{path} route for local disks that have it enabled, which
+         | would hand out these files to anyone who guessed a path and defeat
+         | the entire point of the separate disk.
+         */
+        'medical' => [
+            'driver' => 'local',
+            'root' => storage_path('app/medical'),
+            'serve' => false,
+            'visibility' => 'private',
             'throw' => false,
             'report' => false,
         ],

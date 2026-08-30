@@ -15,5 +15,11 @@
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1"
+    },
+    "dependencies": {
+        "@alpinejs/focus": "^3.17.0",
+        "@alpinejs/intersect": "^3.17.0",
+        "@tailwindcss/typography": "^0.5.20",
+        "alpinejs": "^3.17.0"
     }
 }

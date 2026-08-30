@@ -1,0 +1,272 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/*
+|--------------------------------------------------------------------------
+| Admin panel theme
+|--------------------------------------------------------------------------
+|
+| Filament out of the box looks like Filament. This file makes it look like
+| *this practice's* admin panel, without overriding a single Blade view.
+|
+| Two rules keep it maintainable:
+|
+|   1. Never hardcode a brand colour. Every value below is mixed from
+|      var(--primary-N) — the 50…950 ramp Filament generates from the single
+|      hex in config/site.php — or from --brand-accent, which
+|      AdminPanelProvider injects with a render hook. Change the hex in
+|      config/site.php and this whole file follows. That is the entire point.
+|
+|   2. Dark mode uses `:where(.dark) &` rather than the `dark:` variant.
+|      :where() contributes zero specificity, so these rules stay easy to
+|      override later instead of starting an escalation war.
+|
+| #0d1117 is the one hardcoded colour in the file: the dark-mode surface. It is
+| a neutral near-black chosen so the panel does not tint towards the brand at
+| night, which reads as a colour cast rather than as a dark theme.
+|
+*/
+
+@layer components {
+    :root {
+        --admin-accent: var(--brand-accent, #14a5a0);
+        --admin-radius: 0.875rem;
+        --admin-ring: color-mix(in oklab, var(--primary-600) 12%, transparent);
+
+        /* A hairline ring first, so cards keep a defined edge on a light
+           background, then two soft layers for depth. One wide blur alone reads
+           as a drop shadow; this reads as an object sitting on a surface. */
+        --admin-shadow:
+            0 0 0 1px color-mix(in oklab, var(--primary-950) 7%, transparent),
+            0 1px 2px color-mix(in oklab, var(--primary-950) 6%, transparent),
+            0 8px 24px -12px color-mix(in oklab, var(--primary-950) 18%, transparent);
+    }
+
+    /* ---------------- Sidebar ---------------- */
+
+    .fi-sidebar {
+        background-color: color-mix(in oklab, var(--primary-600) 3%, white);
+    }
+
+    :where(.dark) .fi-sidebar {
+        background-color: color-mix(in oklab, var(--primary-950) 22%, #0d1117);
+    }
+
+    @media (min-width: 1024px) {
+        .fi-sidebar {
+            border-inline-end: 1px solid var(--admin-ring);
+        }
+    }
+
+    .fi-sidebar-item-btn {
+        font-weight: 500;
+    }
+
+    .fi-sidebar-item-btn:hover {
+        background-color: color-mix(in oklab, var(--primary-600) 7%, transparent);
+    }
+
+    /* The active page: a filled pill, brand-coloured text, and an accent bar on
+       the leading edge that lines up down the whole navigation column. */
+    .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+        background-color: color-mix(in oklab, var(--primary-600) 11%, transparent);
+    }
+
+    .fi-sidebar-item.fi-active > .fi-sidebar-item-btn::before {
+        content: '';
+        position: absolute;
+        inset-block: 0.375rem;
+        inset-inline-start: -0.5rem;
+        width: 3px;
+        border-radius: 9999px;
+        background-color: var(--admin-accent);
+    }
+
+    .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
+    .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label {
+        color: var(--primary-700);
+    }
+
+    :where(.dark) .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
+    :where(.dark) .fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-label {
+        color: var(--primary-300);
+    }
+
+    /* Group headings should read as section labels, not as more menu items. */
+    .fi-sidebar-group-label {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    /* ---------------- Topbar ---------------- */
+
+    .fi-topbar > nav {
+        border-bottom: 1px solid var(--admin-ring);
+        background-color: color-mix(in oklab, white 88%, transparent);
+        backdrop-filter: blur(12px);
+    }
+
+    :where(.dark) .fi-topbar > nav {
+        background-color: color-mix(in oklab, #0d1117 88%, transparent);
+    }
+
+    /* ---------------- Panels, cards and tables ---------------- */
+
+    .fi-section,
+    .fi-wi-table,
+    .fi-ta-ctn {
+        border-radius: var(--admin-radius);
+        box-shadow: var(--admin-shadow);
+    }
+
+    .fi-section-header-heading {
+        letter-spacing: -0.01em;
+    }
+
+    .fi-ta-header-cell-label {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .fi-ta-row:hover {
+        background-color: color-mix(in oklab, var(--primary-600) 4%, transparent);
+    }
+
+    :where(.dark) .fi-ta-row:hover {
+        background-color: color-mix(in oklab, var(--primary-400) 7%, transparent);
+    }
+
+    /* Appointment times, fees and phone numbers line up down the column. */
+    .fi-ta-text-item-label {
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------------- Dashboard stat cards ---------------- */
+
+    .fi-wi-stats-overview-stat {
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--admin-radius);
+        box-shadow: var(--admin-shadow);
+        transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease;
+    }
+
+    .fi-wi-stats-overview-stat::before {
+        content: '';
+        position: absolute;
+        inset-inline: 0;
+        top: 0;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-600), var(--admin-accent));
+    }
+
+    /* Only the clickable cards lift — a card that moves but does nothing is a
+       promise the interface does not keep. */
+    a.fi-wi-stats-overview-stat:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 0 0 1px color-mix(in oklab, var(--primary-950) 7%, transparent),
+            0 2px 4px color-mix(in oklab, var(--primary-950) 8%, transparent),
+            0 16px 32px -16px color-mix(in oklab, var(--primary-950) 28%, transparent);
+    }
+
+    .fi-wi-stats-overview-stat-value {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .fi-wi-stats-overview-stat-label {
+        font-size: 0.8125rem;
+        font-weight: 500;
+    }
+
+    /* ---------------- Buttons and inputs ---------------- */
+
+    .fi-btn {
+        font-weight: 600;
+        border-radius: 0.625rem;
+    }
+
+    .fi-input-wrp {
+        border-radius: 0.625rem;
+    }
+
+    /* ---------------- Login screen ---------------- */
+
+    .fi-simple-layout {
+        background:
+            radial-gradient(
+                60rem 40rem at 15% -10%,
+                color-mix(in oklab, var(--primary-600) 16%, transparent),
+                transparent
+            ),
+            radial-gradient(
+                50rem 35rem at 85% 110%,
+                color-mix(in oklab, var(--admin-accent) 14%, transparent),
+                transparent
+            ),
+            var(--primary-50);
+    }
+
+    :where(.dark) .fi-simple-layout {
+        background:
+            radial-gradient(
+                60rem 40rem at 15% -10%,
+                color-mix(in oklab, var(--primary-500) 18%, transparent),
+                transparent
+            ),
+            radial-gradient(
+                50rem 35rem at 85% 110%,
+                color-mix(in oklab, var(--admin-accent) 12%, transparent),
+                transparent
+            ),
+            #0d1117;
+    }
+
+    .fi-simple-main {
+        border-radius: 1.25rem;
+        box-shadow:
+            0 1px 2px color-mix(in oklab, var(--primary-950) 8%, transparent),
+            0 24px 48px -24px color-mix(in oklab, var(--primary-950) 45%, transparent);
+    }
+
+    .fi-simple-header-heading {
+        letter-spacing: -0.02em;
+    }
+
+    /* ---------------- Scrollbars ---------------- */
+
+    .fi-sidebar-nav,
+    .fi-main {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in oklab, var(--primary-600) 30%, transparent) transparent;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar,
+    .fi-main::-webkit-scrollbar {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar-thumb,
+    .fi-main::-webkit-scrollbar-thumb {
+        border-radius: 9999px;
+        background-color: color-mix(in oklab, var(--primary-600) 25%, transparent);
+    }
+
+    .fi-sidebar-nav::-webkit-scrollbar-thumb:hover,
+    .fi-main::-webkit-scrollbar-thumb:hover {
+        background-color: color-mix(in oklab, var(--primary-600) 45%, transparent);
+    }
+}

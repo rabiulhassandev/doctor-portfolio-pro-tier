@@ -1,6 +1,9 @@
 <?php
 
+use App\Support\Clock;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 /*
@@ -14,8 +17,13 @@ use Tests\TestCase;
 |
 */
 
+/*
+ | Every feature test gets a fresh, empty, in-memory SQLite database (see the
+ | DB_CONNECTION lines in phpunit.xml). Nothing here touches the buyer's MySQL
+ | data, and the suite needs no setup beyond `php artisan test`.
+ */
 pest()->extend(TestCase::class)
- // ->use(RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
 
 /*
@@ -44,7 +52,22 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Freeze the clock at a known moment in the clinic's own timezone.
+ *
+ * Slot generation is entirely time-relative — "is this slot in the past?",
+ * "is this inside the booking horizon?" — so a test that does not pin the
+ * clock passes in the morning and fails after six in the evening. Every
+ * booking test calls this first.
+ *
+ * Returns the frozen moment, in clinic time, so a test can build expectations
+ * from it: `$now = freezeClinicClock(); $tomorrow = $now->addDay();`
+ */
+function freezeClinicClock(string $clinicDateTime = '2026-09-01 09:00:00'): CarbonImmutable
 {
-    // ..
+    $moment = CarbonImmutable::parse($clinicDateTime, config('booking.timezone'));
+
+    Carbon::setTestNow($moment);
+
+    return Clock::now();
 }
