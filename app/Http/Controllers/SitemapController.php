@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
 use App\Models\HealthVideo;
+use App\Models\SeoPage;
+use App\Models\SeoSetting;
 use Illuminate\Http\Response;
 
 /**
@@ -22,29 +24,41 @@ class SitemapController extends Controller
 {
     public function __invoke(): Response
     {
+        /*
+         | The whole file is suppressed while the site is marked "do not index".
+         | Serving a sitemap that advertises pages the robots.txt has just told
+         | crawlers to stay away from is a contradiction, and Search Console
+         | reports it as one.
+         */
+        if (SeoSetting::current()->discourage_indexing) {
+            return response()
+                ->view('sitemap', ['urls' => collect()])
+                ->header('Content-Type', 'application/xml');
+        }
+
         $urls = collect([
-            ['loc' => route('home'), 'priority' => '1.0', 'changefreq' => 'weekly'],
-            ['loc' => route('about'), 'priority' => '0.8', 'changefreq' => 'monthly'],
-            ['loc' => route('services'), 'priority' => '0.8', 'changefreq' => 'monthly'],
-            ['loc' => route('contact'), 'priority' => '0.9', 'changefreq' => 'monthly'],
+            $this->fixedPage('home', '1.0', 'weekly'),
+            $this->fixedPage('about', '0.8', 'monthly'),
+            $this->fixedPage('services', '0.8', 'monthly'),
+            $this->fixedPage('contact', '0.9', 'monthly'),
         ]);
 
         if (config('site.features.booking')) {
             // The most valuable page on the site — it is the one that turns a
             // visitor into a patient.
-            $urls->push(['loc' => route('booking'), 'priority' => '0.9', 'changefreq' => 'weekly']);
+            $urls->push($this->fixedPage('booking', '0.9', 'weekly'));
         }
 
         if (config('site.features.faq')) {
-            $urls->push(['loc' => route('faq'), 'priority' => '0.7', 'changefreq' => 'monthly']);
+            $urls->push($this->fixedPage('faq', '0.7', 'monthly'));
         }
 
         if (config('site.features.gallery')) {
-            $urls->push(['loc' => route('gallery'), 'priority' => '0.6', 'changefreq' => 'monthly']);
+            $urls->push($this->fixedPage('gallery', '0.6', 'monthly'));
         }
 
         if (config('site.features.blog')) {
-            $urls->push(['loc' => route('blog.index'), 'priority' => '0.8', 'changefreq' => 'weekly']);
+            $urls->push($this->fixedPage('blog.index', '0.8', 'weekly'));
 
             BlogPost::query()
                 ->published()
@@ -61,7 +75,7 @@ class SitemapController extends Controller
         }
 
         if (config('site.features.health_videos')) {
-            $urls->push(['loc' => route('videos.index'), 'priority' => '0.8', 'changefreq' => 'weekly']);
+            $urls->push($this->fixedPage('videos.index', '0.8', 'weekly'));
 
             HealthVideo::query()
                 ->published()
@@ -78,7 +92,36 @@ class SitemapController extends Controller
         }
 
         return response()
-            ->view('sitemap', ['urls' => $urls])
+            // A page the doctor has marked "hide from search engines" must not
+            // be advertised here either. `filter` rather than an `if` at each
+            // call site, so a new page cannot forget to check.
+            ->view('sitemap', ['urls' => $urls->filter()->values()])
             ->header('Content-Type', 'application/xml');
+    }
+
+    /**
+     * One of the fixed pages, with whatever the admin has overridden.
+     *
+     * Returns null when the page is marked noindex, which the caller filters
+     * out. The defaults passed in are the developer's judgement about the
+     * shape of a doctor's site; the admin's values win where they exist.
+     *
+     * @return array<string, string>|null
+     */
+    private function fixedPage(string $routeName, string $priority, string $changefreq): ?array
+    {
+        $override = SeoPage::forRoute($routeName);
+
+        if ($override?->noindex) {
+            return null;
+        }
+
+        return [
+            'loc' => route($routeName),
+            'priority' => $override?->priority !== null
+                ? number_format($override->priority, 1)
+                : $priority,
+            'changefreq' => $override?->changefreq ?: $changefreq,
+        ];
     }
 }

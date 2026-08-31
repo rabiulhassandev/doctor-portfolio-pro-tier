@@ -17,6 +17,8 @@ use App\Http\Controllers\Patient\DashboardController;
 use App\Http\Controllers\Patient\ProfileController;
 use App\Http\Controllers\PaymentCallbackController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\RedirectController;
+use App\Http\Controllers\SeoFileController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
@@ -156,6 +158,35 @@ Route::post('/payments/ipn/{gateway}', [PaymentCallbackController::class, 'ipn']
 |--------------------------------------------------------------------------
 | SEO
 |--------------------------------------------------------------------------
+|
+| All three are generated per request from the database, so the doctor changes
+| a setting in the admin panel and the file changes — no command to run and no
+| file to upload.
+|
+| >>> robots.txt must NOT also exist in public/. <<<
+| A real file there is served by the web server before Laravel sees the
+| request, so it silently overrides this route and every switch on the SEO
+| settings screen quietly stops working.
+|
 */
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', [SeoFileController::class, 'robots'])->name('robots');
+Route::get('/llms.txt', [SeoFileController::class, 'llms'])->name('llms');
+
+/*
+|--------------------------------------------------------------------------
+| Managed redirects
+|--------------------------------------------------------------------------
+|
+| MUST BE LAST. The fallback runs only when nothing above matched, which is
+| exactly the set of requests a redirect could apply to — so normal traffic
+| never touches the redirects table. See RedirectController for why this is a
+| fallback rather than global middleware.
+|
+*/
+
+// Spelled out rather than passed as an invokable class string: Route::fallback
+// does not resolve `Controller::class` the way Route::get does, and quietly
+// treats it as a callable pair instead.
+Route::fallback([RedirectController::class, '__invoke']);

@@ -54,6 +54,10 @@ class DatabaseSeeder extends Seeder
             // Availability before patients — see the note above.
             AvailabilitySeeder::class,
             PatientSeeder::class,
+
+            // Last: it writes descriptions for pages whose content the seeders
+            // above have just created.
+            SeoSeeder::class,
         ]);
 
         $this->summarise();

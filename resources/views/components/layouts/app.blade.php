@@ -32,27 +32,26 @@
 ])
 
 @php
-    use App\Support\Media;
+    use App\Models\SeoSetting;
+    use App\Support\Seo;
 
     $siteName = $doctor->name ?: config('site.name');
 
-    // "About | Dr. Tahmina Rahman" — never "Dr. Tahmina Rahman | Dr. Tahmina Rahman".
-    $metaTitle = $title
-        ? $title . ' | ' . $siteName
-        : ($doctor->meta_title ?: $siteName . ' — ' . $doctor->specialization);
+    /*
+     | Every fallback chain in the <head> lives in App\Support\Seo, not here.
+     |
+     | There are five sources for each of these — the page, the admin's
+     | per-page override, the site-wide default, the doctor's profile and
+     | config/site.php — and expressing that in Blade meant nobody could test
+     | it and nobody could see the order at a glance. See the class for the
+     | rule, written down once.
+     */
+    $seo = Seo::resolve($title, $description, $image);
+    $seoSettings = SeoSetting::current();
 
-    $metaDescription = $description
-        ?: ($doctor->meta_description ?: ($doctor->short_bio ?: config('site.meta_description')));
-
-    // Google truncates around 160 characters. `Str::limit` appends its ellipsis
-    // *after* the limit, so ask for 157 to land on 160 in the worst case, and
-    // work it out once rather than in each of the three tags that print it.
-    $metaDescription = Str::limit(strip_tags($metaDescription), 157);
-
-    // Social crawlers fetch this on their own servers, so it has to be absolute.
-    $metaImage = $image
-        ? Media::absoluteUrl($image)
-        : Media::absoluteUrl($doctor->photo);
+    $metaTitle = $seo->title;
+    $metaDescription = $seo->description;
+    $metaImage = $seo->image;
 
     $colors = config('site.colors');
 @endphp
@@ -65,18 +64,34 @@
 
     <title>{{ $metaTitle }}</title>
     <meta name="description" content="{{ $metaDescription }}">
-    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="canonical" href="{{ $seo->canonical }}">
+
+    {{-- Crawler instructions. `max-image-preview:large` is the cheap win: it is
+         what allows a full-size thumbnail beside the result rather than a
+         postage stamp, and it costs one word. Becomes `noindex, nofollow` while
+         the staging switch on the SEO settings screen is on. --}}
+    <meta name="robots" content="{{ $seo->robots }}">
+
+    {{-- Ownership verification for Search Console and friends, pasted in by the
+         doctor on the SEO settings screen. --}}
+    @foreach (Seo::verificationTags() as $name => $content)
+        <meta name="{{ $name }}" content="{{ $content }}">
+    @endforeach
 
     {{-- Open Graph / Twitter, so shared links look right in messages and feeds. --}}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:title" content="{{ $metaTitle }}">
     <meta property="og:description" content="{{ $metaDescription }}">
-    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:url" content="{{ $seo->canonical }}">
     @if ($metaImage)
         <meta property="og:image" content="{{ $metaImage }}">
+        <meta property="og:image:alt" content="{{ $metaTitle }}">
     @endif
     <meta name="twitter:card" content="{{ $metaImage ? 'summary_large_image' : 'summary' }}">
+    @if ($seo->twitterHandle)
+        <meta name="twitter:site" content="{{ $seo->twitterHandle }}">
+    @endif
 
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
 
@@ -150,9 +165,72 @@
     --}}
     @livewireScriptConfig
 
-    {{-- Pages push their schema.org markup here. --}}
+    {{--
+        schema.org for the site itself: who publishes it, in what language, and
+        the organisation behind it. Distinct from the Physician block that the
+        home, about and contact pages push — that one describes the practice,
+        this one describes the website.
+
+        It is also the part an AI assistant actually reasons over. A question
+        like "a woman cardiologist in Dhanmondi who consults in Bangla" is
+        answered from areaServed and availableLanguage, not from prose.
+    --}}
+    @foreach (Seo::siteSchema() as $schemaBlock)
+        <script type="application/ld+json">
+            {!! json_encode($schemaBlock, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+        </script>
+    @endforeach
+
+    {{-- Pages push their own schema.org markup here. --}}
     @stack('schema')
     @stack('head')
+
+    {{--
+        Analytics.
+
+        Never loaded on the booking pages, inside a patient account, or on a
+        document download — see Seo::analyticsAllowedHere(). On a medical site
+        the URL alone says what somebody is worried about, and that is not the
+        doctor's to hand to a third party.
+    --}}
+    @if ($seo->analyticsAllowed)
+        @if ($seoSettings->gtm_container_id)
+            <script>
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+                var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+                j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','{{ $seoSettings->gtm_container_id }}');
+            </script>
+        @endif
+
+        @if ($seoSettings->ga4_measurement_id)
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ $seoSettings->ga4_measurement_id }}"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '{{ $seoSettings->ga4_measurement_id }}', { anonymize_ip: true });
+            </script>
+        @endif
+
+        @if ($seoSettings->meta_pixel_id)
+            <script>
+                !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+                n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '{{ $seoSettings->meta_pixel_id }}');
+                fbq('track', 'PageView');
+            </script>
+        @endif
+    @endif
+
+    {{-- The doctor's own <head> code, from the SEO settings screen. Rendered
+         exactly as typed — the form says so in as many words. --}}
+    @if ($seo->analyticsAllowed && filled($seoSettings->head_scripts))
+        {!! $seoSettings->head_scripts !!}
+    @endif
 </head>
 
 {{-- The bottom padding clears the fixed call/book bar, which only exists below
@@ -181,5 +259,18 @@
     @endunless
 
     @stack('scripts')
+
+    {{-- Tag Manager's <noscript> half. Useless on its own, so it only appears
+         where the script above it did. --}}
+    @if ($seo->analyticsAllowed && $seoSettings->gtm_container_id)
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id={{ $seoSettings->gtm_container_id }}"
+                    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+    @endif
+
+    @if ($seo->analyticsAllowed && filled($seoSettings->body_scripts))
+        {!! $seoSettings->body_scripts !!}
+    @endif
 </body>
 </html>

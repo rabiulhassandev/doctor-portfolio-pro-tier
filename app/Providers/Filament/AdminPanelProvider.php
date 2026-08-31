@@ -98,6 +98,14 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-user-group'),
                 NavigationGroup::make('Website content')
                     ->icon('heroicon-o-document-text'),
+                /*
+                 | Last, and separate from "Website content" on purpose. Writing
+                 | an article and tuning how the site is found are different
+                 | jobs done on different days, and a doctor looking for one
+                 | should not have to read past the other.
+                 */
+                NavigationGroup::make('Search & visibility')
+                    ->icon('heroicon-o-magnifying-glass'),
             ])
             // Staff constantly want to check how an edit actually looks.
             ->navigationItems([

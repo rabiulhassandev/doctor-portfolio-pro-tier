@@ -20,6 +20,7 @@ a patient's results.
 - [Signing in](#signing-in)
 - [Environment variables](#environment-variables)
 - [Rebranding for a new doctor](#rebranding-for-a-new-doctor)
+- [Search, AI and SEO](#search-ai-and-seo)
 - [How booking works](#how-booking-works)
 - [Payments](#payments)
 - [SMS and WhatsApp](#sms-and-whatsapp)
@@ -390,6 +391,128 @@ and declared at the top of `resources/css/app.css` — three details in that
 > it inside a commercial product.** If in doubt, delete the two `@font-face`
 > blocks and the files in `resources/fonts/` — the system Bengali fallbacks take
 > over cleanly.
+
+---
+
+## Search, AI and SEO
+
+Everything about how the site is **found** is managed by the doctor from
+**Search & visibility** in the admin panel. Nothing here needs a developer, and
+nothing here is in code.
+
+The split with `config/site.php` is worth keeping in mind:
+
+| | `config/site.php` | Search & visibility |
+|---|---|---|
+| Answers | how the site **looks** | how the site is **found** |
+| Edited by | a developer, once per buyer | the doctor, continually |
+| Changing it is | a rebrand | operations |
+
+### Health check — start here
+
+`/admin/seo-health` reads the real content and lists what is actually wrong,
+worst first, each with a link to the screen that fixes it. The list empties as
+things get done.
+
+There is deliberately **no score out of a hundred**. A number invites people to
+optimise the number, and every plugin that has one ends up rewarding keyword
+stuffing, because that is what a number can measure.
+
+### SEO settings
+
+| Tab | What it holds |
+|---|---|
+| **Search listing** | Title format (`:page \| :site`), default description with a live character count, default share image, X handle |
+| **Indexing** | The staging switch, and extra `robots.txt` rules |
+| **AI assistants** | Per-crawler switches, and the `llms.txt` editor |
+| **Verification** | Search Console, Bing, Yandex, Pinterest codes |
+| **Analytics** | GA4, Tag Manager, Meta pixel, custom `<head>`/`<body>` code |
+| **Business details** | Languages, areas served, price range — the structured data an assistant reasons over |
+
+> **The staging switch is the dangerous one.** “Ask search engines not to index
+> this site” makes the whole site invisible, and nothing anywhere reports an
+> error — it just stops being found. It is reported as a critical finding on
+> the health check for as long as it is on, and saving with it on raises a
+> warning that does not auto-dismiss.
+
+### AI assistants — the part most people get wrong
+
+The switches separate two things that are usually lumped together:
+
+- **Search agents** (`OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`,
+  `Claude-SearchBot`) fetch a page in order to **cite** it. Blocking these is
+  the modern equivalent of blocking Googlebot — somebody asking ChatGPT for a
+  cardiologist in Dhanmondi simply will not be shown you.
+- **Training agents** (`GPTBot`, `ClaudeBot`, `Google-Extended`, `CCBot`,
+  `Applebot-Extended`) collect text to train models. Allowing that is a values
+  question, not an SEO one, and “no” is a perfectly reasonable answer.
+
+Everything defaults to allowed, including for a doctor who never opens the
+screen. The health check warns about blocked **search** agents and says nothing
+about training — it has no business nagging anyone about a deliberate choice.
+
+`/llms.txt` is generated from the profile, services, FAQs and articles unless
+the field is filled in. It is a proposed convention, not a standard, and the
+major assistants do not commit to reading it; it costs one route, so it ships.
+
+### Page listings
+
+One row per fixed page — home, about, services, booking, contact, articles,
+videos, FAQ, gallery. Each has a title, a description and a **live Google
+result preview** that updates as you type, which is what makes the screen
+usable by someone who is not an SEO consultant.
+
+The rows are created and kept in step automatically. There is no Create button,
+because the only thing it could do is invite someone to type a Laravel route
+name by hand.
+
+**An admin override outranks the page's own hard-coded title.** That is
+deliberate — the Blade string is the template author's default, and the whole
+point is changing “Services” to “Cardiology services in Dhanmondi” without
+touching code. Articles and videos are unaffected; their meta fields live on
+their own forms, beside the writing.
+
+### Redirects
+
+For a practice **replacing an existing website**. Whatever standing the old
+pages hold in Google is attached to the old URLs, and launching with 404s on
+all of them throws it away silently.
+
+Paste the old address — a full URL is fine, it is normalised — choose 301, done.
+The table counts how often each rule fires, so a dead rule can be retired with
+evidence. Served from `Route::fallback()`, so **normal traffic never queries the
+table**; the cost is only paid on a request that would have 404'd anyway.
+
+### Generated files
+
+| URL | Notes |
+|---|---|
+| `/robots.txt` | **Not** a file in `public/` — delete it if it reappears, or the web server serves it before Laravel and every setting silently stops working |
+| `/sitemap.xml` | Always current. Honours per-page `noindex`, priority and changefreq. Empty while the staging switch is on |
+| `/llms.txt` | Generated or hand-written |
+
+### Analytics and patient privacy
+
+> Tracking **never loads** on the booking pages, inside a patient account, on
+> the sign-in screen, or on a document download — whatever is configured. This
+> is enforced in `App\Support\Seo::analyticsAllowedHere()` and covered by tests.
+>
+> On a medical site the URL alone says what somebody is worried might be wrong
+> with them. The doctor cannot consent to sharing that on the patient's behalf,
+> so it is not a setting.
+
+Marketing pages still report, which is where the useful signal is anyway.
+
+### What no admin panel can do for you
+
+Two things matter more than everything above, and neither is in this software:
+
+1. **Google Search Console.** Free, and the only place that tells you what
+   people searched for before they found you. Verify with the code on the
+   Verification tab, then submit `/sitemap.xml` once.
+2. **A Google Business Profile.** For a practice with one address, that listing
+   brings more patients than the entire website. Both are linked from the
+   health check screen.
 
 ---
 
