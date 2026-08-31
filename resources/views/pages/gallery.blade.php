@@ -17,7 +17,8 @@
         title="Gallery"
         lead="A look at where you will be seen, before you arrive." />
 
-    <section class="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+    <section class="paper-grain relative isolate bg-paper">
+    <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
         @if ($images->isEmpty())
             <x-ui.empty-state
                 title="No photographs yet"
@@ -40,7 +41,7 @@
                     @foreach ($images as $index => $image)
                         <button type="button"
                                 @click="open = {{ $index }}"
-                                class="group relative aspect-square overflow-hidden rounded-[3px] border border-line bg-paper-shade focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass"
+                                class="group relative aspect-square overflow-hidden border border-line bg-paper-shade focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass"
                                 data-reveal="{{ 40 * ($index % 4) }}">
                             <img src="{{ $image->imageUrl() }}"
                                  alt="{{ $image->altText() }}"
@@ -123,5 +124,6 @@
                 </div>
             </div>
         @endif
+    </div>
     </section>
 </x-layouts.app>

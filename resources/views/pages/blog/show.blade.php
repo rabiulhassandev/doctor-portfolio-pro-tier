@@ -36,6 +36,7 @@
         </script>
     @endpush
 
+    <div class="paper-grain relative isolate bg-paper">
     <article class="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
 
         <nav class="mb-6 flex items-center gap-2 text-sm text-muted" aria-label="Breadcrumb">
@@ -85,19 +86,20 @@
                 @endif
             </div>
 
-            <p class="rounded-[3px] border border-line bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
+            <p class="border-l border-brass bg-paper-shade p-4 text-[0.9375rem] leading-relaxed text-muted">
                 This article is general information, not advice about your own health.
                 Please speak to {{ $doctor->name }} about anything that concerns you.
             </p>
         </footer>
     </article>
+    </div>
 
     @if ($related->isNotEmpty())
-        <section class="border-t border-line bg-paper-shade">
+        <section class="paper-grain relative isolate border-t border-line bg-paper-shade">
             <div class="mx-auto max-w-7xl px-5 py-14 sm:px-8">
                 <x-ui.section-heading align="left" eyebrow="Keep reading" title="More articles" class="mb-8" />
 
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
                     @foreach ($related as $other)
                         <x-ui.post-card :post="$other" data-reveal="{{ 50 * $loop->index }}" />
                     @endforeach

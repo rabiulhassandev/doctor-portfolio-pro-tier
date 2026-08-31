@@ -14,9 +14,9 @@ beforeEach(function () {
     Cache::flush();
 
     DoctorProfile::create([
-        'name' => 'Dr. Nafis Ahmed',
+        'name' => 'Dr. Tahmina Rahman',
         'specialization' => 'Consultant Cardiologist',
-        'chamber_name' => 'Sohrid Heart Care',
+        'chamber_name' => 'Anwara Heart Care',
         'registration_label' => 'BMDC Reg. No.',
         'registration_number' => 'A-42817',
         'short_bio' => 'Twenty years of cardiac practice in Dhaka.',
@@ -177,9 +177,49 @@ describe('SEO and structured data', function () {
     it('gives each page its own title and description', function () {
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('<title>About Dr. Nafis Ahmed | Dr. Nafis Ahmed</title>', escape: false)
+            ->assertSee('<title>About Dr. Tahmina Rahman | Dr. Tahmina Rahman</title>', escape: false)
             ->assertSee('og:title', escape: false)
             ->assertSee('rel="canonical"', escape: false);
+    });
+});
+
+describe('page banners', function () {
+    /*
+     | The photograph behind each interior page's heading band. It is looked up
+     | by route name in config/site.php, so a buyer changes the whole site's
+     | photography in one file and no page view names an image.
+     */
+
+    it('uses the photograph configured for the page it is on', function () {
+        config()->set('site.banners', [
+            'default' => 'site/fallback.jpg',
+            'services' => 'gallery/theatre.jpg',
+        ]);
+
+        $this->get(route('services'))
+            ->assertOk()
+            ->assertSee('gallery/theatre.jpg', escape: false)
+            ->assertDontSee('site/fallback.jpg', escape: false);
+    });
+
+    it('falls back to the default for a page with no entry of its own', function () {
+        config()->set('site.banners', ['default' => 'site/fallback.jpg']);
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('site/fallback.jpg', escape: false);
+    });
+
+    it('still renders the band when no photograph is configured at all', function () {
+        // A fresh install before the seeders have copied the demo images. The
+        // band has to degrade to its plain dark treatment, not to a broken page
+        // or an <img> pointing at nothing.
+        config()->set('site.banners', []);
+
+        $this->get(route('services'))
+            ->assertOk()
+            ->assertSee('Services')
+            ->assertDontSee('<img src="" ', escape: false);
     });
 });
 

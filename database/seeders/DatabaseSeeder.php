@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
         User::query()->updateOrCreate(
             ['email' => self::ADMIN_EMAIL],
             [
-                'name' => 'Dr. Nafis Ahmed Chowdhury',
+                'name' => 'Dr. Tahmina Rahman',
                 'password' => Hash::make(self::ADMIN_PASSWORD),
                 'email_verified_at' => now(),
             ],

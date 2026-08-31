@@ -81,6 +81,6 @@ class Service extends Model
     /** Falls back to the opening words of the description. */
     public function shortSummary(int $limit = 140): ?string
     {
-        return $this->summary ?: Str::limit(strip_tags((string) $this->description), $limit);
+        return $this->summary ?: Str::limit(strip_tags((string) $this->description), $limit, preserveWords: true);
     }
 }

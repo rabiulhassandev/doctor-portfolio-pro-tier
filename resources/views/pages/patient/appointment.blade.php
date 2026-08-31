@@ -169,7 +169,7 @@
                             {{-- A confirm step, because there is no undo and the
                                  slot is released to somebody else immediately. --}}
                             <div x-data="{ confirming: false }" class="flex flex-col gap-3">
-                                <x-ui.button variant="secondary" x-show="! confirming" @click="confirming = true">
+                                <x-ui.button variant="outline" x-show="! confirming" @click="confirming = true">
                                     Cancel this appointment
                                 </x-ui.button>
 

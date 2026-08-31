@@ -38,7 +38,7 @@
                                 </div>
                             </div>
 
-                            <x-ui.button :href="route('documents.download', $document)" variant="secondary" size="sm">
+                            <x-ui.button :href="route('documents.download', $document)" variant="outline" size="sm">
                                 Download
                             </x-ui.button>
                         </div>

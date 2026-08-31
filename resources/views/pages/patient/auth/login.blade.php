@@ -26,12 +26,16 @@
                 required />
 
             <div class="flex flex-wrap items-center justify-between gap-3">
+                {{-- `accent-brass` rather than the usual `text-*` trick: that
+                     one only works with @tailwindcss/forms, which this project
+                     does not load, so the box was rendering in the browser's
+                     default blue. --}}
                 <label class="flex cursor-pointer items-center gap-2 text-sm text-muted">
                     <input type="checkbox"
                            name="remember"
                            value="1"
                            @checked(old('remember'))
-                           class="size-4 rounded border-line-strong text-ink focus:outline-2 focus:outline-offset-2 focus:outline-brass/40">
+                           class="size-4 accent-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass">
                     Keep me signed in
                 </label>
 

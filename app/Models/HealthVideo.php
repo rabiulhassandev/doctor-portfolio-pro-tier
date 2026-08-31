@@ -298,7 +298,8 @@ class HealthVideo extends Model
 
     public function summary(int $limit = 140): string
     {
-        return Str::limit(strip_tags((string) $this->description), $limit);
+        // preserveWords, or a card ends on "…why the top one matters more as y…"
+        return Str::limit(strip_tags((string) $this->description), $limit, preserveWords: true);
     }
 
     /**

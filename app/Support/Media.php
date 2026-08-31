@@ -47,6 +47,35 @@ class Media
     }
 
     /**
+     * The photograph behind an interior page's heading band.
+     *
+     * Resolution order, first hit wins:
+     *
+     *   1. whatever the view passed explicitly;
+     *   2. `site.banners.<current route name>`;
+     *   3. `site.banners.default`.
+     *
+     * Returns null when none of those is set, and the band falls back to its
+     * plain dark treatment. That is a supported outcome, not a failure — it is
+     * what a fresh install looks like before the seeders have copied the demo
+     * photographs onto the disk.
+     *
+     * `$key` overrides the route name for the screens that are not a route of
+     * their own, such as the shared patient sign-in shell.
+     */
+    public static function banner(?string $explicit = null, ?string $key = null): ?string
+    {
+        if (filled($explicit)) {
+            return static::url($explicit);
+        }
+
+        $banners = config('site.banners', []);
+        $key ??= request()->route()?->getName();
+
+        return static::url($banners[$key] ?? $banners['default'] ?? null);
+    }
+
+    /**
      * The same URL with a scheme and host on the front.
      *
      * Facebook, X and Google read og:image and the schema.org blocks from a

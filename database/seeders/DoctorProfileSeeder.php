@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 /**
  * The demo doctor.
  *
- * >>> DR. NAFIS AHMED CHOWDHURY DOES NOT EXIST. <<<
+ * >>> DR. TAHMINA RAHMAN DOES NOT EXIST. <<<
  *
  * The name, the chamber, the BMDC number, the qualifications and the fee are
  * all invented. The telephone number ends in zeroes and the email uses the
@@ -20,6 +20,10 @@ use Illuminate\Database\Seeder;
  * order, a BMDC registration number, a Dhanmondi chamber, evening hours and
  * Friday closed. To move the template to another market, change this file,
  * DoctorProfile::DAYS (the week order) and the `registration_label` field.
+ *
+ * The demo doctor is a woman, and the copy elsewhere in the seeders refers to
+ * her as such — TestimonialSeeder in particular. If you rename her to a man,
+ * grep the seeders for "she" and "her" before you ship.
  */
 class DoctorProfileSeeder extends Seeder
 {
@@ -29,47 +33,46 @@ class DoctorProfileSeeder extends Seeder
         DoctorProfile::query()->updateOrCreate(
             ['id' => DoctorProfile::query()->value('id') ?? 1],
             [
-                'name' => 'Dr. Nafis Ahmed Chowdhury',
+                'name' => 'Dr. Tahmina Rahman',
                 'specialization' => 'Consultant Cardiologist',
                 'registration_label' => 'BMDC Reg. No.',
-                'registration_number' => 'A-42817',
-                'chamber_name' => 'Sohrid Heart Care',
-                'tagline' => 'Careful, unhurried heart care — and the time to explain it properly.',
+                'registration_number' => 'A-51294',
+                'chamber_name' => 'Anwara Heart Care',
+                'tagline' => 'Unhurried heart care, explained in words you can take home.',
                 'photo' => 'doctor/portrait.jpg',
-                'years_of_experience' => 20,
+                'years_of_experience' => 18,
 
-                'short_bio' => 'I have looked after hearts in Dhaka for twenty years. Most of what worries '
-                    .'my patients turns out to be manageable — the difficult part is usually getting a '
-                    .'straight answer about what is actually happening.',
+                'short_bio' => 'I have looked after hearts in Dhaka for eighteen years. Most of what frightens '
+                    .'my patients turns out to be manageable — the hard part is usually getting a straight '
+                    .'answer about what is actually happening.',
 
-                'bio' => <<<'TEXT'
-                I qualified from Dhaka Medical College in 2004 and have spent the twenty years since in
-                cardiology, first at the National Institute of Cardiovascular Diseases and, since 2013, in
-                my own chamber in Dhanmondi.
+                /*
+                 | ONE LINE PER PARAGRAPH, blank line between.
+                 |
+                 | These were heredocs wrapped at eighty columns to read nicely
+                 | in the editor, and the site rendered every one of those wraps
+                 | as a line break — the About page came out with a ragged right
+                 | edge breaking mid-sentence. A newline in this field is a
+                 | newline on the page. Keep paragraphs on single lines however
+                 | long they get.
+                 */
+                'bio' => implode("\n\n", [
+                    'I qualified from Sir Salimullah Medical College in 2007 and have spent the eighteen years since in cardiology, first at the National Institute of Cardiovascular Diseases and, since 2016, in my own chamber in Dhanmondi.',
+                    'My work is mostly the unglamorous half of cardiology: blood pressure that will not settle, chest pain that may or may not be the heart, breathlessness that has crept up over a year. I do echocardiography and ECG here at the chamber, so in most cases you leave the same evening knowing what is going on rather than waiting a week for a report.',
+                    'A large part of my practice is women — often sent to me late, and often after being told the symptoms were anxiety. Heart disease presents differently in women and is missed more often because of it, so I take that history slowly and in full.',
+                    'I see patients from across Dhaka and, increasingly, from outside it. If you have been sent by another doctor, please bring whatever reports you have — even old ones. A trace from three years ago often tells me more than a fresh one.',
+                ]),
 
-                My work is mostly the unglamorous half of cardiology: blood pressure that will not settle,
-                chest pain that may or may not be the heart, breathlessness that has crept up over a year.
-                I do echocardiography and ECG here at the chamber, so in most cases you leave the same
-                evening knowing what is going on rather than waiting a week for a report.
-
-                I see patients from across Dhaka and, increasingly, from outside it. If you have been sent
-                by another doctor, please bring whatever reports you have — even old ones. A trace from
-                three years ago often tells me more than a fresh one.
-                TEXT,
-
-                'philosophy' => <<<'TEXT'
-                A consultation should not feel rushed, and you should leave understanding what is wrong,
-                what we are going to do about it, and what would make me want to see you sooner.
-
-                I would rather spend fifteen extra minutes explaining a diagnosis than have a patient go
-                home and look it up in a panic. If I have not been clear, please say so and ask again.
-                TEXT,
+                'philosophy' => implode("\n\n", [
+                    'A consultation should not feel rushed, and you should leave understanding what is wrong, what we are going to do about it, and what would make me want to see you sooner.',
+                    'I would rather spend fifteen extra minutes explaining a diagnosis than have a patient go home and look it up in a panic. If I have not been clear, please say so and ask me again.',
+                ]),
 
                 'qualifications' => [
-                    ['title' => 'MD (Cardiology)', 'institution' => 'National Institute of Cardiovascular Diseases', 'year' => '2013'],
-                    ['title' => 'FCPS (Medicine)', 'institution' => 'Bangladesh College of Physicians and Surgeons', 'year' => '2010'],
-                    ['title' => 'BCS (Health)', 'institution' => 'Bangladesh Civil Service', 'year' => '2006'],
-                    ['title' => 'MBBS', 'institution' => 'Dhaka Medical College', 'year' => '2004'],
+                    ['title' => 'MD (Cardiology)', 'institution' => 'National Institute of Cardiovascular Diseases', 'year' => '2015'],
+                    ['title' => 'FCPS (Medicine)', 'institution' => 'Bangladesh College of Physicians and Surgeons', 'year' => '2012'],
+                    ['title' => 'BCS (Health)', 'institution' => 'Bangladesh Civil Service', 'year' => '2009'],
+                    ['title' => 'MBBS', 'institution' => 'Sir Salimullah Medical College', 'year' => '2007'],
                 ],
 
                 // Reserved documentation values — these cannot reach anybody.
@@ -112,7 +115,7 @@ class DoctorProfileSeeder extends Seeder
                     .'ECGs or prescriptions — even old ones. If you are coming about blood pressure, bring '
                     .'your home readings if you have been keeping them.',
 
-                'meta_title' => 'Dr. Nafis Ahmed Chowdhury — Consultant Cardiologist, Dhanmondi',
+                'meta_title' => 'Dr. Tahmina Rahman — Consultant Cardiologist, Dhanmondi',
                 'meta_description' => 'Consultant cardiologist in Dhanmondi, Dhaka. Echocardiography, ECG '
                     .'and blood pressure care. Book an appointment online and collect your reports.',
             ],

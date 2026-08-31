@@ -390,9 +390,103 @@
         content: '';
         position: absolute;
         inset: 0;
+        /* Behind the section's content but still above its own background.
+           Every element carrying this also carries `isolate`, so the negative
+           index cannot escape into the page behind. */
+        z-index: -1;
         pointer-events: none;
         opacity: 0.04;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /*
+    | The light-side equivalent.
+    |
+    | The dark sections had `.surface-grain` and the light ones had nothing, and
+    | that was the whole reason the two halves of the site looked like they came
+    | from different projects: one had a surface, the other had a fill.
+    |
+    | Noise ONLY, and deliberately so.
+    |
+    | The first attempt layered a wide brass wash over the grain, anchored to
+    | the top-left of the element. It looked right in isolation and wrong on the
+    | page: the home page runs four `paper` sections back to back, each one
+    | restarted the gradient at its own top edge, and the result was a visible
+    | horizontal step everywhere two of them met — the exact seam the texture
+    | was added to hide.
+    |
+    | Anything anchored to a section box will do that. Texture that tiles is
+    | safe at a boundary; texture that has a position is not.
+    */
+    .paper-grain::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        opacity: 0.055;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /*
+    | The oversized index numeral on an editorial row.
+    |
+    | It is set in the display serif at a size no label would ever use, held at
+    | a weight that keeps it decorative rather than loud, and lined up on its
+    | own baseline. Tabular figures matter here: 01 and 11 must occupy the same
+    | width or the whole left edge of the list wanders.
+    */
+    .numeral-index {
+        font-family: var(--font-display);
+        font-weight: 300;
+        font-variant-numeric: tabular-nums;
+        line-height: 0.8;
+        color: color-mix(in oklab, var(--brand-brass) 62%, transparent);
+        transition: color 0.5s var(--ease-out-soft);
+    }
+
+    /*
+    | An editorial row: the pattern that replaced the card grid on the light
+    | sections.
+    |
+    | A list of hairline-separated rows, each with a brass bar that grows down
+    | the leading edge on hover and a background that lifts to the card surface.
+    | The whole row is the target, which on a phone is the difference between a
+    | list you can use and one you have to aim at.
+    |
+    | This exists as a component rather than as a string of utilities repeated
+    | in four views because it is now the site's main way of presenting a list,
+    | and "how does a row behave" should be one decision.
+    */
+    .row-editorial {
+        position: relative;
+        transition: background-color 0.45s var(--ease-out-soft);
+    }
+
+    .row-editorial::before {
+        content: '';
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        width: 2px;
+        background-color: var(--brand-brass);
+        transform: scaleY(0);
+        transform-origin: top;
+        transition: transform 0.5s var(--ease-out-soft);
+    }
+
+    .row-editorial:hover,
+    .row-editorial:focus-visible {
+        background-color: var(--brand-surface);
+    }
+
+    .row-editorial:hover::before,
+    .row-editorial:focus-visible::before {
+        transform: scaleY(1);
+    }
+
+    .row-editorial:hover .numeral-index {
+        color: var(--brand-brass);
     }
 
     /*

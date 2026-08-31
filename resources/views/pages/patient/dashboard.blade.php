@@ -107,7 +107,7 @@
                         @endif
 
                         @if (config('site.features.booking'))
-                            <x-ui.button :href="route('booking')" variant="secondary" size="sm" class="mt-1 w-fit">
+                            <x-ui.button :href="route('booking')" variant="outline" size="sm" class="mt-1 w-fit">
                                 Book another appointment
                             </x-ui.button>
                         @endif

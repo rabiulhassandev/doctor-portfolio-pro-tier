@@ -26,16 +26,16 @@ class TestimonialSeeder extends Seeder
                 'role' => 'Patient since 2019',
                 'rating' => 5,
                 'message' => 'My blood pressure had been high for three years and nobody had explained why the '
-                    .'tablets kept changing. Dr. Chowdhury drew it out on paper for me. It is the first time I '
+                    .'tablets kept changing. Dr. Rahman drew it out on paper for me. It is the first time I '
                     .'have understood my own treatment.',
             ],
             [
                 'name' => 'Rezaul K.',
                 'role' => 'Patient',
                 'rating' => 5,
-                'message' => 'I came in convinced I was having a heart attack. He did the ECG straight away, sat '
-                    .'me down and told me honestly that it was not my heart. He could have sent me for a dozen '
-                    .'tests instead.',
+                'message' => 'I came in convinced I was having a heart attack. She did the ECG straight away, '
+                    .'sat me down and told me honestly that it was not my heart. She could have sent me for a '
+                    .'dozen tests instead.',
             ],
             [
                 'name' => 'Nasreen H.',
@@ -48,11 +48,11 @@ class TestimonialSeeder extends Seeder
                 'name' => 'Imran S.',
                 'role' => 'Patient',
                 'rating' => 4,
-                'message' => 'The chamber runs a little late in the evenings, but that is because he does not '
+                'message' => 'The chamber runs a little late in the evenings, but that is because she does not '
                     .'rush anyone — including me. Worth the wait.',
             ],
             [
-                'name' => 'Farhana R.',
+                'name' => 'Farhana K.',
                 'role' => 'Booking for her father',
                 'rating' => 5,
                 'message' => 'Booking online meant I could arrange my father\'s appointment from Chattogram '
@@ -62,8 +62,8 @@ class TestimonialSeeder extends Seeder
                 'name' => 'Tanvir M.',
                 'role' => 'Patient since 2018',
                 'rating' => 5,
-                'message' => 'He told me to lose eight kilos before he would consider changing my medication. It '
-                    .'was not what I wanted to hear and it was completely right.',
+                'message' => 'She told me to lose eight kilos before she would consider changing my medication. '
+                    .'It was not what I wanted to hear and it was completely right.',
             ],
         ];
 

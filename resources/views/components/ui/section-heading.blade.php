@@ -32,7 +32,7 @@
 @endphp
 
 <div {{ $attributes->class([
-    'flex flex-col gap-5',
+    'flex flex-col gap-4 sm:gap-5',
     $isCentred ? 'items-center text-center' : 'items-start text-left',
 ]) }} data-reveal>
     @if ($eyebrow)
@@ -42,9 +42,13 @@
         </div>
     @endif
 
+    {{-- The mobile step is deliberately large. Cormorant needs size to read as
+         itself, but 40px of it on a 375px screen takes three lines for a
+         five-word heading and pushes the section's actual content off the
+         bottom of the phone. 32px is still unmistakably display type. --}}
     @if ($title)
         <{{ $as }} @class([
-            'max-w-3xl text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-[3.5rem]',
+            'max-w-3xl text-[2rem] leading-[1.06] sm:text-[2.75rem] lg:text-[3.5rem]',
             'text-white' => $onDark,
             'text-ink' => ! $onDark,
         ])>{{ $title }}</{{ $as }}>
@@ -52,7 +56,7 @@
 
     @if ($lead)
         <p @class([
-            'max-w-[36rem] text-lg leading-relaxed',
+            'max-w-[36rem] leading-relaxed sm:text-lg',
             'text-white/65' => $onDark,
             'text-muted' => ! $onDark,
         ])>{{ $lead }}</p>

@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Dr. Nafis Ahmed Chowdhury'),
+    'name' => env('APP_NAME', 'Dr. Tahmina Rahman'),
 
     'specialization' => 'Consultant Cardiologist',
 
@@ -150,6 +150,45 @@ return [
         'sidebar_ink' => '#3F4A57',    // Navigation labels.
         'canvas' => '#F4F6F9',         // The page behind the cards.
         'brand_tint' => '#EAF0FD',     // The logo block and active menu item.
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Page banners
+    |--------------------------------------------------------------------------
+    |
+    | The photograph behind the heading band at the top of each interior page.
+    | Keyed by ROUTE NAME, so <x-ui.page-hero> picks the right one on its own
+    | and no page view has to name a file.
+    |
+    | Paths are relative to the `public` disk — the same place the admin panel's
+    | uploads land — so a buyer can drop their own photographs into
+    | storage/app/public and point these at them. An absolute URL works too.
+    |
+    | `default` covers any page not listed. Set the whole array to an empty one
+    | and every band falls back to the plain dark treatment, which still looks
+    | finished — the photograph is an enhancement, not a dependency. That is
+    | also what happens on a fresh install before the seeders have run, so a
+    | missing file is never a broken page.
+    |
+    | Choose DARK, QUIET photographs. A white-walled clinic shot goes grey under
+    | the overlay and the heading stops being legible; a picture with a busy
+    | centre fights the words. Rooms, corridors, equipment and cityscapes work.
+    |
+    */
+
+    'banners' => [
+        'default' => 'site/dhaka.jpg',
+        'about' => 'doctor/consulting.jpg',
+        'services' => 'gallery/procedure-room.jpg',
+        'contact' => 'site/dhaka.jpg',
+        'blog.index' => 'gallery/reception.jpg',
+        'gallery' => 'gallery/chamber.jpg',
+        'faq' => 'gallery/waiting-area.jpg',
+        'videos.index' => 'gallery/ecg-room.jpg',
+        'booking' => 'gallery/echocardiography.jpg',
+        // The patient sign-in / register screens.
+        'patient.auth' => 'gallery/chamber.jpg',
     ],
 
     /*

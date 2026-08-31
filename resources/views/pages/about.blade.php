@@ -1,5 +1,6 @@
 @php
     use App\Support\Media;
+    use App\Support\Text;
 
     $photo = Media::url($doctor->photo);
 @endphp
@@ -16,35 +17,47 @@
         :lead="$doctor->specialization . ($doctor->chamber_name ? ' · ' . $doctor->chamber_name : '')" />
 
     {{-- Biography --}}
-    <section class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
+    <section class="paper-grain relative isolate bg-paper">
+    <div class="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-20">
         <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
 
             {{-- Portrait and facts --}}
-            <div class="flex flex-col gap-6" data-reveal>
+            <div class="flex flex-col gap-8" data-reveal>
                 @if ($photo)
-                    <img src="{{ $photo }}"
-                         alt="{{ $doctor->name }}, {{ $doctor->specialization }}"
-                         class="aspect-[4/5] w-full rounded-[4px] object-cover shadow-lift">
+                    {{-- The same offset brass frame as the home hero. Repeating
+                         one device on the two pages that carry a photograph of
+                         the doctor is what makes it read as a house style
+                         rather than as decoration. --}}
+                    <div class="relative">
+                        <div class="absolute -bottom-3 -right-3 hidden size-full border border-brass/45 sm:block" aria-hidden="true"></div>
+
+                        <img src="{{ $photo }}"
+                             alt="{{ $doctor->name }}, {{ $doctor->specialization }}"
+                             class="relative aspect-[4/5] w-full object-cover shadow-lift">
+                    </div>
                 @endif
 
-                <dl class="flex flex-col gap-4 rounded-[4px] border border-line bg-surface p-5 shadow-card">
+                {{-- The facts, as a set of hairline rows. This was a bordered
+                     card with a shadow, which made four short lines of text
+                     look like a form. --}}
+                <dl class="flex flex-col border-t border-line">
                     @if ($doctor->years_of_experience)
-                        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-4">
-                            <dt class="text-sm text-muted">Experience</dt>
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <dt class="eyebrow">Experience</dt>
                             <dd class="font-semibold text-ink">{{ $doctor->years_of_experience }} years</dd>
                         </div>
                     @endif
 
                     @if ($registration = $doctor->registration())
-                        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-4">
-                            <dt class="text-sm text-muted">Registration</dt>
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <dt class="eyebrow">Registration</dt>
                             <dd class="text-right font-semibold text-ink">{{ $registration }}</dd>
                         </div>
                     @endif
 
                     @if ($doctor->hasFee())
-                        <div class="flex items-baseline justify-between gap-4 border-b border-line pb-4">
-                            <dt class="text-sm text-muted">Consultation</dt>
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <dt class="eyebrow">Consultation</dt>
                             <dd class="font-semibold text-ink">
                                 {{ config('booking.payment.currency', 'BDT') }}
                                 {{ number_format((float) $doctor->consultation_fee, 0) }}
@@ -53,8 +66,8 @@
                     @endif
 
                     @if ($doctor->phone)
-                        <div class="flex items-baseline justify-between gap-4">
-                            <dt class="text-sm text-muted">Chamber</dt>
+                        <div class="flex items-baseline justify-between gap-4 border-b border-line py-3.5">
+                            <dt class="eyebrow">Chamber</dt>
                             <dd>
                                 <a href="{{ $doctor->telHref() }}" class="link-underline font-semibold text-ink">
                                     {{ $doctor->phone }}
@@ -73,33 +86,51 @@
             <div class="flex flex-col gap-10">
                 @if ($doctor->bio)
                     <div class="prose-article" data-reveal>
-                        {!! nl2br(e($doctor->bio)) !!}
+                        {!! Text::rich($doctor->bio) !!}
                     </div>
                 @endif
 
                 @if ($doctor->philosophy)
-                    <div class="flex flex-col gap-3 rounded-[4px] border-l-2 border-brass bg-paper-shade p-6" data-reveal>
+                    {{-- No panel. A brass rule down the leading edge, the same
+                         mark the testimonials use, and the words set large in
+                         the display serif — this is a pulled quote, not a
+                         callout box. --}}
+                    <div class="flex flex-col gap-3 border-l border-brass pl-6 sm:pl-8" data-reveal>
                         <p class="eyebrow">My approach</p>
-                        <div class="font-display text-xl leading-snug text-ink">
-                            {!! nl2br(e($doctor->philosophy)) !!}
+                        {{-- `flex flex-col gap-4` because Text::rich returns
+                             real <p> elements and this block is not inside
+                             `prose-article`, so nothing else would space
+                             them. --}}
+                        <div class="flex flex-col gap-4 font-display text-[1.5rem] leading-[1.3] text-ink sm:text-[1.75rem]">
+                            {!! Text::rich($doctor->philosophy) !!}
                         </div>
                     </div>
                 @endif
 
                 @if ($doctor->qualifications)
                     <div class="flex flex-col gap-5" data-reveal>
-                        <h2 class="text-2xl text-ink">Qualifications</h2>
+                        <div class="flex items-center gap-3">
+                            <span class="rule-brass" aria-hidden="true"></span>
+                            <h2 class="eyebrow">Qualifications</h2>
+                        </div>
 
-                        <ol class="relative flex flex-col gap-6 border-l border-line pl-6">
+                        {{-- Numbered rows rather than a dotted timeline. These
+                             are degrees, not events: the year is one field of
+                             several, and drawing a line down them implies a
+                             chronology the list does not actually run in. --}}
+                        <ol class="flex flex-col border-t border-line">
                             @foreach ($doctor->qualifications as $qualification)
-                                <li class="relative">
-                                    {{-- The dot on the timeline. --}}
-                                    <span class="absolute -left-[1.8rem] top-1.5 size-3 rounded-[3px] border-2 border-paper bg-brass" aria-hidden="true"></span>
+                                <li class="flex items-baseline gap-5 border-b border-line py-4">
+                                    <span class="numeral-index shrink-0 text-xl" aria-hidden="true">
+                                        {{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                                    </span>
 
-                                    <p class="font-semibold text-ink">{{ $qualification['title'] ?? '' }}</p>
-                                    <p class="text-[0.9375rem] text-muted">
-                                        {{ collect([$qualification['institution'] ?? null, $qualification['year'] ?? null])->filter()->implode(' · ') }}
-                                    </p>
+                                    <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                                        <span class="font-semibold text-ink">{{ $qualification['title'] ?? '' }}</span>
+                                        <span class="text-[0.9375rem] text-muted">
+                                            {{ collect([$qualification['institution'] ?? null, $qualification['year'] ?? null])->filter()->implode(' · ') }}
+                                        </span>
+                                    </span>
                                 </li>
                             @endforeach
                         </ol>
@@ -107,17 +138,22 @@
                 @endif
             </div>
         </div>
+    </div>
     </section>
 
     {{-- Services --}}
     @if ($services->isNotEmpty())
-        <section class="border-t border-line bg-paper-shade">
+        <section class="paper-grain relative isolate border-t border-line bg-paper-shade">
             <div class="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-20">
-                <x-ui.section-heading eyebrow="What I treat" title="Services" class="mb-10" />
+                <x-ui.section-heading eyebrow="What I treat" title="Services" class="mb-8 sm:mb-12" />
 
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="grid border-t border-line lg:grid-cols-2 lg:gap-x-12">
                     @foreach ($services as $service)
-                        <x-ui.service-card :service="$service" data-reveal="{{ 50 * ($loop->index % 4) }}" />
+                        <x-ui.service-row
+                            :service="$service"
+                            :index="$loop->index"
+                            class="border-b border-line"
+                            data-reveal="{{ 50 * ($loop->index % 4) }}" />
                     @endforeach
                 </div>
             </div>

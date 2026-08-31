@@ -47,6 +47,12 @@
 
 <header
     x-data="{ scrolled: false, open: false }"
+    {{-- Seeded on init, not only on scroll. `@scroll.window` alone left the bar
+         transparent for anyone who arrives already scrolled — a restored
+         session, a back-button return, or a link to an anchor — which on an
+         interior page means white text on white paper until they happen to
+         move the wheel. --}}
+    x-init="scrolled = window.scrollY > 32"
     @scroll.window="scrolled = window.scrollY > 32"
     :class="scrolled
         ? 'border-night-line bg-night/95 backdrop-blur-md'

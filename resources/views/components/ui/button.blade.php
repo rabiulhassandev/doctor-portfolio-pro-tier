@@ -70,6 +70,24 @@
         'danger' => 'bg-negative text-white shadow-card hover:-translate-y-px hover:shadow-lift',
     ];
 
+    /*
+     | An unknown variant name falls back to `brass` — which is silent, and
+     | which is how seven `variant="secondary"` buttons (a name this component
+     | never had) ended up rendered as solid brass across the patient account
+     | and the booking wizard. Every one of them was meant to be the quiet
+     | option, and the palette's one rule is that the accent is spent once per
+     | view.
+     |
+     | So it still falls back rather than breaking a live site, but it shouts
+     | while you are building. Debug mode only: a typo a buyer's developer
+     | introduces after launch should not take their site down.
+     */
+    if (config('app.debug') && ! isset($variants[$variant])) {
+        throw new \InvalidArgumentException(
+            "Unknown button variant [{$variant}]. Use one of: ".implode(', ', array_keys($variants)).'.'
+        );
+    }
+
     $classes = implode(' ', [
         $base,
         $sizes[$size] ?? $sizes['md'],

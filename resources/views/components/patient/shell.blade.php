@@ -82,6 +82,7 @@
     </div>
 </div>
 
+<div class="paper-grain relative isolate bg-paper">
 <div class="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-12">
     @if (session('status'))
         <x-ui.alert tone="positive" class="mb-6">{{ session('status') }}</x-ui.alert>
@@ -98,4 +99,5 @@
     @enderror
 
     {{ $slot }}
+</div>
 </div>

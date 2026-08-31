@@ -265,6 +265,42 @@ class DoctorProfile extends Model
         return trim(($this->registration_label ?? '').' '.$this->registration_number);
     }
 
+    /**
+     * How prose refers to the doctor: "Dr. Rahman".
+     *
+     * The views used to do `Str::before($doctor->name, ' ')` for this, which on
+     * every name that opens with an honorific — which is every name this field
+     * will ever hold — returned the literal string "Dr." and produced sentences
+     * like "Dr. will go through it with you".
+     *
+     * Honorific plus family name rather than honorific plus first name, because
+     * it is what a patient writing to the chamber would use. A name stored
+     * without an honorific gets the last word on its own, and a single-word
+     * name is returned untouched.
+     */
+    public function shortName(): string
+    {
+        $name = trim((string) $this->name);
+
+        if ($name === '') {
+            return '';
+        }
+
+        $parts = preg_split('/\s+/', $name) ?: [$name];
+        $family = (string) end($parts);
+
+        // Anything ending in a full stop is a title, not a name — "Dr." on its
+        // own, or a name that is nothing but honorifics. Give back the whole
+        // string rather than a fragment of one.
+        if (count($parts) < 2 || str_ends_with($family, '.')) {
+            return $name;
+        }
+
+        return str_ends_with($parts[0], '.') || preg_match('/^(dr|prof|professor|mr|mrs|ms)$/i', $parts[0])
+            ? $parts[0].' '.$family
+            : $family;
+    }
+
     /** Street address on one line, e.g. "12 Harley St, London, NW1 4LT, UK". */
     public function fullAddress(): string
     {

@@ -80,7 +80,9 @@ class BlogPost extends Model
     /** Falls back to the opening words of the article. */
     public function summary(int $limit = 160): string
     {
-        return $this->excerpt ?: Str::limit(strip_tags($this->content), $limit);
+        // preserveWords: a summary cut through the middle of a word looks like
+        // a bug wherever it appears, and this one also feeds meta descriptions.
+        return $this->excerpt ?: Str::limit(strip_tags($this->content), $limit, preserveWords: true);
     }
 
     /** Rough reading time, rounded up, never less than a minute. */

@@ -81,7 +81,7 @@
 
             <div class="flex flex-wrap items-center justify-center gap-3">
                 <x-ui.button :href="route('patient.appointments.show', $booked)">View this appointment</x-ui.button>
-                <x-ui.button :href="route('patient.dashboard')" variant="secondary">My account</x-ui.button>
+                <x-ui.button :href="route('patient.dashboard')" variant="outline">My account</x-ui.button>
             </div>
         </div>
 
@@ -288,7 +288,7 @@
 
                             <div class="flex flex-wrap gap-3">
                                 <x-ui.button :href="route('patient.register')">Create an account</x-ui.button>
-                                <x-ui.button :href="route('patient.login')" variant="secondary">I already have one</x-ui.button>
+                                <x-ui.button :href="route('patient.login')" variant="outline">I already have one</x-ui.button>
                             </div>
                         </div>
                     @else
@@ -353,7 +353,7 @@
                                        wire:model.live="gateway"
                                        value="{{ $driver->name() }}"
                                        name="gateway"
-                                       class="mt-1 size-4 border-line-strong text-ink focus:outline-2 focus:outline-offset-2 focus:outline-brass/40">
+                                       class="mt-1 size-4 accent-brass focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass">
 
                                 <span class="flex flex-col gap-0.5">
                                     <span class="font-semibold text-ink">{{ $driver->label() }}</span>

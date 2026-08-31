@@ -30,8 +30,18 @@ class HomeController extends Controller
                 ? BlogPost::query()->published()->latestFirst()->limit(3)->get()
                 : collect(),
 
+            /*
+             | Featured first, then filled out with whatever else is published.
+             |
+             | The section renders as one large film with the rest listed beside
+             | it, and that column wants four entries to balance the feature. A
+             | strict `featured()` filter gave it however many the doctor had
+             | ticked — three on the seeded demo — and left a third of the
+             | section empty. Curation still decides the order, and the lead
+             | film in particular; it just no longer decides the height.
+             */
             'videos' => config('site.features.health_videos')
-                ? HealthVideo::query()->published()->featured()->ordered()->limit(3)->get()
+                ? HealthVideo::query()->published()->orderByDesc('is_featured')->ordered()->limit(5)->get()
                 : collect(),
         ]);
     }

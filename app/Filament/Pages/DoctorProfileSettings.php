@@ -155,7 +155,7 @@ class DoctorProfileSettings extends Page
                         TextInput::make('chamber_name')
                             ->label('Chamber name')
                             ->maxLength(255)
-                            ->placeholder('Sohrid Heart Care')
+                            ->placeholder('Anwara Heart Care')
                             ->helperText('The name on the sign outside. Leave empty to show only your own name.'),
 
                         // Two fields rather than one so the register can differ

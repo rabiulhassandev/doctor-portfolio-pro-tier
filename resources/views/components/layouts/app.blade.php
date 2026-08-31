@@ -36,7 +36,7 @@
 
     $siteName = $doctor->name ?: config('site.name');
 
-    // "About | Dr. Nafis Ahmed" — but never "Dr. Nafis Ahmed | Dr. Nafis Ahmed".
+    // "About | Dr. Tahmina Rahman" — never "Dr. Tahmina Rahman | Dr. Tahmina Rahman".
     $metaTitle = $title
         ? $title . ' | ' . $siteName
         : ($doctor->meta_title ?: $siteName . ' — ' . $doctor->specialization);

@@ -111,15 +111,26 @@ php artisan serve  # in a second terminal
 
 > **The demo doctor is fictional and the demo photographs are stock.**
 >
-> Dr. Nafis Ahmed Chowdhury does not exist. The name, the chamber, the BMDC
+> Dr. Tahmina Rahman does not exist. The name, the chamber, the BMDC
 > number, the patient quotes, the articles and the fees are all invented for the
 > demo — the telephone numbers end in zeroes and the emails use the reserved
 > `.example` domain, so nothing on a seeded demo site can reach a real person.
 >
 > The photographs in `database/seeders/media` are stock images licensed for
-> commercial use. The seeded videos are real public YouTube and Vimeo videos,
-> included only so the library has something that plays; they are not medical
-> advice and have nothing to do with any practice.
+> commercial use. `doctor/portrait.jpg` and `doctor/consulting.jpg` are by
+> Dr. Jyoti Bandi via Pexels ([36665076](https://www.pexels.com/photo/36665076/),
+> [36665089](https://www.pexels.com/photo/36665089/)) under the Pexels licence,
+> which permits commercial use without attribution — the credit is here because
+> it is the decent thing, not because it is required. **The person in them is a
+> real doctor who is not Tahmina Rahman.** She is standing in for a fictional
+> character on a demo, and a buyer who ships the template with her face still on
+> it is misrepresenting a real person.
+>
+> The seeded videos are real public YouTube and Vimeo videos, included only so
+> the library has something that plays; they are not medical advice and have
+> nothing to do with any practice. Some of the YouTube IDs have since been taken
+> down and now show a grey placeholder thumbnail — replace them, or clear the
+> table, before showing the demo to anybody.
 >
 > **Replace every photograph, every video and every word of this content from
 > the admin panel before the site goes live.**
@@ -282,6 +293,13 @@ Three things are worth knowing before reaching for a different palette:
 - **Every page opens with a dark band.** The navbar is transparent until you
   scroll, so a page with a light top would lose its own header. If you add one,
   give it a dark band.
+- **The light sections are lists, not card grids.** Four three-column card grids
+  stacked on top of each other is the single thing that most makes a site look
+  like a template, however carefully each card is set. Services, FAQs, contact
+  methods and qualifications are all hairline-separated rows (`.row-editorial`,
+  with `.numeral-index` for the figures); articles and videos keep their
+  photographs but drop the card chrome around them. Add `.paper-grain` to any
+  new light section so it has the same tooth as the rest.
 
 The same file carries the feature switches:
 
@@ -299,7 +317,41 @@ features => [
 
 Turning one off hides the page, its navigation link **and** its sitemap entry —
 without deleting code you might want back later.
-### 2. Site name — `.env`
+
+### 2. Page banners — `config/site.php`
+
+Every interior page opens with a full-bleed photograph under a dark overlay. The
+picture is chosen **by route name**, so no page view names an image file:
+
+```php
+banners => [
+    default        => site/dhaka.jpg,
+    about          => doctor/consulting.jpg,
+    services       => gallery/procedure-room.jpg,
+    faq            => gallery/waiting-area.jpg,
+    patient.auth   => gallery/chamber.jpg,   // the sign-in screens
+    // …
+],
+```
+
+Paths are relative to the `public` disk — the same place the admin panel's
+uploads land — so a buyer can drop photographs into `storage/app/public` and
+point these at them. An absolute URL works too.
+
+Set the array to `[]` and every band falls back to its plain dark treatment,
+which still looks finished. That is also what a fresh install looks like before
+the seeders have run, so **a missing file is never a broken page**.
+
+Choose dark, quiet photographs. A white-walled clinic shot goes grey under the
+overlay and the heading stops being legible; a picture with a busy centre fights
+the words. Rooms, corridors, equipment and cityscapes work.
+
+One thing to keep in step: `<x-ui.page-hero>` takes a `width` prop (`wide` /
+`medium` / `narrow`) that must match the container the page below it uses. Get it
+wrong and the heading's left edge and the content's left edge disagree by a
+couple of hundred pixels, which reads as two grids bolted together.
+
+### 3. Site name — `.env`
 
 ```dotenv
 APP_NAME="Dr. Amelia Hart"
