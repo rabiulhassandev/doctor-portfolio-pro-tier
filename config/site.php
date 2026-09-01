@@ -189,6 +189,16 @@ return [
         'booking' => 'gallery/echocardiography.jpg',
         // The patient sign-in / register screens.
         'patient.auth' => 'gallery/chamber.jpg',
+
+        /*
+         | The staff sign-in screen at /admin/login.
+         |
+         | The one place the admin panel borrows the public site's look. Inside
+         | the panel it goes back to being a bright working tool — see the note
+         | on the `admin` palette above — but the front door is what a buyer
+         | shows people, and a flat blue rectangle is not what they bought.
+         */
+        'admin.login' => 'gallery/reception.jpg',
     ],
 
     /*

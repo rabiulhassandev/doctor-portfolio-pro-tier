@@ -33,6 +33,38 @@ beforeEach(function () {
     $this->staff = User::factory()->create();
 });
 
+describe('the sign-in screen', function () {
+    /*
+     | The one screen in the panel that wears the PUBLIC site's identity: deep
+     | navy, brass and a photograph of the chamber. Everything behind the login
+     | form goes back to being the bright blue working tool.
+     |
+     | The render hooks that do it are scoped to Filament's Login page, and
+     | that scoping is the whole design — these two tests are what stop it
+     | quietly becoming global.
+     */
+
+    it('wears the public palette and a photograph', function () {
+        $this->get('/admin/login')
+            ->assertOk()
+            ->assertSee('--login-brass:'.config('site.colors.brass'), escape: false)
+            ->assertSee('--login-night:'.config('site.colors.night'), escape: false)
+            ->assertSee('login-brand', escape: false)
+            // A way out, or the screen is a dead end for anyone who arrived at
+            // /admin by mistake.
+            ->assertSee('Back to the website');
+    });
+
+    it('keeps that palette off every other screen in the panel', function () {
+        $this->actingAs($this->staff)
+            ->get('/admin')
+            ->assertOk()
+            ->assertDontSee('--login-brass', escape: false)
+            ->assertDontSee(config('site.colors.brass'), escape: false)
+            ->assertDontSee('login-brand', escape: false);
+    });
+});
+
 describe('access control', function () {
     it('sends a stranger to the login page', function () {
         $this->get('/admin')->assertRedirect('/admin/login');

@@ -5,6 +5,9 @@ namespace App\Providers\Filament;
 use App\Filament\Widgets\BookingsPerWeek;
 use App\Filament\Widgets\PracticeOverview;
 use App\Filament\Widgets\TodaysAppointments;
+use App\Models\DoctorProfile;
+use App\Support\Media;
+use Filament\Auth\Pages\Login;
 use Filament\FontProviders\BunnyFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -150,6 +153,94 @@ class AdminPanelProvider extends PanelProvider
                         'tint' => config('site.admin.brand_tint'),
                     ],
                 ),
+            )
+            /*
+            |------------------------------------------------------------------
+            | The sign-in screen
+            |------------------------------------------------------------------
+            |
+            | The ONE place the panel wears the public website's clothes: deep
+            | navy, brass, and a photograph of the chamber. Everything past the
+            | login form goes straight back to being a bright working tool.
+            |
+            | That is not an inconsistency, it is the point. The front door is
+            | seen before anyone is working and it is what a buyer shows people;
+            | a flat blue rectangle there undersells the product. The dense
+            | tables behind it want contrast and legibility, not atmosphere.
+            |
+            | BOTH HOOKS ARE SCOPED TO THE LOGIN PAGE, and that scoping is
+            | load-bearing rather than tidiness: the public palette must not
+            | leak into the rest of the panel, and a test asserts the public
+            | brass appears nowhere in the dashboard's HTML.
+            */
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): string => Blade::render(
+                    '<style>.fi-simple-layout{'
+                    .'--login-night:{{ $night }};'
+                    .'--login-night-soft:{{ $nightSoft }};'
+                    .'--login-brass:{{ $brass }};'
+                    .'--login-brass-bright:{{ $brassBright }};'
+                    .'@if ($photo)--login-photo:url("{{ $photo }}");@endif'
+                    .'}</style>',
+                    [
+                        'night' => config('site.colors.night'),
+                        'nightSoft' => config('site.colors.night_soft'),
+                        'brass' => config('site.colors.brass'),
+                        'brassBright' => config('site.colors.brass_bright'),
+                        // Null on a fresh install before the seeders have run.
+                        // The CSS falls back to a plain navy field.
+                        'photo' => Media::banner(key: 'admin.login'),
+                    ],
+                ),
+                scopes: Login::class,
+            )
+            /*
+             | The identity panel beside the form.
+             |
+             | Injected rather than built by overriding Filament's Login page,
+             | because a subclass would have to carry a copy of the auth form's
+             | Blade and would need revisiting on every Filament upgrade. A
+             | render hook and a stylesheet survive that; this is markup that
+             | sits next to the form, not markup that replaces it.
+             */
+            ->renderHook(
+                PanelsRenderHook::SIMPLE_LAYOUT_START,
+                fn (): string => Blade::render(
+                    <<<'BLADE'
+                    <aside class="login-brand" aria-hidden="true">
+                        <div class="login-brand-inner">
+                            <p class="login-brand-eyebrow"><span></span>{{ $eyebrow }}</p>
+                            <p class="login-brand-name">{{ $name }}</p>
+                            @if ($specialization)
+                                <p class="login-brand-role">{{ $specialization }}</p>
+                            @endif
+                            <p class="login-brand-lead">{{ $lead }}</p>
+                        </div>
+                    </aside>
+                    BLADE,
+                    [
+                        'eyebrow' => 'Practice administration',
+                        'name' => config('site.name'),
+                        'specialization' => DoctorProfile::current()->specialization,
+                        'lead' => 'Appointments, patients, payments and everything on the website — in one place.',
+                    ],
+                ),
+                scopes: Login::class,
+            )
+            /*
+             | A way back to the public site.
+             |
+             | Without it the sign-in screen is a dead end for anybody who
+             | arrived at /admin by mistake — and on a template, somebody always
+             | does.
+             */
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => Blade::render(
+                    '<a href="{{ url(\'/\') }}" class="login-back">&larr; Back to the website</a>'
+                ),
+                scopes: Login::class,
             )
             /*
              | The centred credit line under the content, as in the reference
