@@ -10,6 +10,7 @@ use App\Models\HealthVideo;
 use App\Models\SeoPage;
 use App\Models\SeoSetting;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
@@ -67,11 +68,63 @@ class SeoAudit
             ->values();
     }
 
-    /** @return array<int, array<string, mixed>> */
+    /** How long a cached summary is trusted. */
+    private const CACHE_TTL = 300;
+
+    private const CACHE_KEY = 'seo.audit.summary';
+
+    /**
+     * The tally, CACHED.
+     *
+     * >>> Do not make this call run() directly again. <<<
+     *
+     * The navigation badge asks for this on every render, and Filament renders
+     * the sidebar on every page in the panel — so an uncached summary put the
+     * whole audit, ten queries across seven tables, in front of every single
+     * admin request. It was the largest single cost on the dashboard and it had
+     * nothing to do with the dashboard.
+     *
+     * Five minutes is right for advisory data: nothing here is transactional,
+     * and {@see run()} stays live so the health check screen itself is never
+     * showing a stale list. Opening that screen refreshes this too, so the
+     * badge agrees with the page the moment anybody looks.
+     *
+     * @return array<string, int>
+     */
     public static function summary(): array
     {
-        $findings = static::run();
+        return Cache::remember(
+            self::CACHE_KEY,
+            self::CACHE_TTL,
+            fn (): array => static::tally(static::run()),
+        );
+    }
 
+    /**
+     * Recount now and refresh the cache.
+     *
+     * Called by the health check screen, which has just run the audit live and
+     * may as well hand the result to the badge rather than leaving it to
+     * rediscover the same numbers on the next page load.
+     *
+     * @param  Collection<int, array<string, mixed>>|null  $findings
+     * @return array<string, int>
+     */
+    public static function refreshSummary(?Collection $findings = null): array
+    {
+        $summary = static::tally($findings ?? static::run());
+
+        Cache::put(self::CACHE_KEY, $summary, self::CACHE_TTL);
+
+        return $summary;
+    }
+
+    /**
+     * @param  Collection<int, array<string, mixed>>  $findings
+     * @return array<string, int>
+     */
+    private static function tally(Collection $findings): array
+    {
         return [
             'critical' => $findings->where('severity', self::CRITICAL)->count(),
             'warning' => $findings->where('severity', self::WARNING)->count(),

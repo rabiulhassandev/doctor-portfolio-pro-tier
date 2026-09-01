@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\AwaitingConfirmation;
 use App\Filament\Widgets\BookingsPerWeek;
 use App\Filament\Widgets\PracticeOverview;
 use App\Filament\Widgets\TodaysAppointments;
@@ -123,10 +124,16 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            /*
+             | Dashboard order: the numbers, then the queue that has a deadline,
+             | then today's list, then the trend. Each widget's own $sort holds
+             | the order; this array only registers them.
+             */
             ->widgets([
                 PracticeOverview::class,
-                BookingsPerWeek::class,
+                AwaitingConfirmation::class,
                 TodaysAppointments::class,
+                BookingsPerWeek::class,
             ])
             /*
              | The rest of the admin palette, handed to the theme stylesheet as

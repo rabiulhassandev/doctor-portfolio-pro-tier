@@ -57,16 +57,33 @@ class SeoHealth extends Page
         return 'danger';
     }
 
+    /**
+     * The findings, run live and memoised for this render.
+     *
+     * The view asks for both the list and the tally, and without holding the
+     * result the audit would run twice per page load.
+     *
+     * @var Collection<int, array<string, mixed>>|null
+     */
+    private ?Collection $findings = null;
+
     /** @return Collection<int, array<string, mixed>> */
     public function getFindings(): Collection
     {
-        return SeoAudit::run();
+        return $this->findings ??= SeoAudit::run();
     }
 
-    /** @return array<string, int> */
+    /**
+     * @return array<string, int>
+     *
+     * Refreshes the cached tally the navigation badge reads, rather than
+     * reading it. The audit has just run live for this page; leaving the badge
+     * to rediscover the same numbers on the next request would be both slower
+     * and briefly wrong.
+     */
     public function getSummary(): array
     {
-        return SeoAudit::summary();
+        return SeoAudit::refreshSummary($this->getFindings());
     }
 
     protected function getHeaderActions(): array
@@ -76,9 +93,16 @@ class SeoHealth extends Page
                 ->label('Check again')
                 ->icon('heroicon-o-arrow-path')
                 ->color('gray')
-                // Everything is computed on render, so re-rendering IS the
-                // re-check. No state to clear, nothing to queue.
-                ->action(fn () => null),
+                /*
+                 | The findings are computed live on every render, so
+                 | re-rendering IS the re-check. All this does is drop the
+                 | memoised copy held for this request and refresh the cached
+                 | tally behind the navigation badge.
+                 */
+                ->action(function (): void {
+                    $this->findings = null;
+                    SeoAudit::refreshSummary($this->getFindings());
+                }),
 
             Action::make('robots')
                 ->label('View robots.txt')

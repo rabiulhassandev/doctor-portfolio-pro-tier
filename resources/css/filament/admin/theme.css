@@ -318,6 +318,42 @@
         background-color: color-mix(in oklab, var(--primary-600) 80%, #0d1117);
     }
 
+    /*
+     | The one card allowed to break rank.
+     |
+     | Added by PracticeOverview only while appointments are actually waiting to
+     | be confirmed — the single tile on this dashboard that represents work to
+     | do rather than a number to read. It goes back to blue the moment the
+     | queue is empty.
+     |
+     | This is the exception that proves the no-colour-coding rule above rather
+     | than a retreat from it: one amber tile among three blue ones is findable
+     | across a room, four coloured tiles are a fruit salad.
+     */
+    .fi-wi-stats-overview-stat.stat-attention {
+        background-color: var(--warning-500);
+        box-shadow: 0 1px 3px color-mix(in oklab, var(--warning-950) 22%, transparent);
+    }
+
+    :where(.dark) .fi-wi-stats-overview-stat.stat-attention {
+        background-color: color-mix(in oklab, var(--warning-600) 75%, #0d1117);
+    }
+
+    /*
+     | Content sits above the ghost icon, which is absolutely positioned and
+     | would otherwise take the clicks meant for the card's link.
+     */
+    .fi-wi-stats-overview-stat-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Filament tints the description when a Stat has a colour; on a filled tile
+       that lands as amber text on amber. Everything in here is white. */
+    .fi-wi-stats-overview-stat .fi-wi-stats-overview-stat-description.fi-color {
+        color: color-mix(in oklab, white 82%, transparent);
+    }
+
     .fi-wi-stats-overview-stat-label {
         text-transform: uppercase;
         letter-spacing: 0.05em;

@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\AppointmentStatus;
 use App\Models\Appointment;
 use App\Support\Clock;
+use Carbon\CarbonImmutable;
 use Filament\Widgets\ChartWidget;
 
 /**
@@ -15,7 +16,12 @@ use Filament\Widgets\ChartWidget;
  */
 class BookingsPerWeek extends ChartWidget
 {
-    protected static ?int $sort = 1;
+    /*
+     | Last. It answers a question about the direction of the practice, which
+     | matters weekly; the panels above it answer questions about today, which
+     | matter now.
+     */
+    protected static ?int $sort = 3;
 
     protected int|string|array $columnSpan = 2;
 
@@ -29,32 +35,69 @@ class BookingsPerWeek extends ChartWidget
         return Appointment::query()->exists();
     }
 
+    /**
+     * Eight weeks of bookings, in ONE query.
+     *
+     * This used to run a query per week and, worse, hydrate every appointment
+     * in each of them into a model just to count by status — sixteen queries
+     * and eight collections of Eloquent objects to draw twenty-four bars.
+     *
+     * The bucketing stays in PHP rather than becoming a `GROUP BY WEEK(...)`,
+     * deliberately. Week-number SQL is different on MySQL, SQLite and Postgres,
+     * the test suite runs on SQLite while production runs on MySQL, and a
+     * portable index scan over a few hundred rows costs nothing. That is the
+     * same reasoning that kept the double-booking guard off a generated column.
+     *
+     * `toBase()` skips model hydration entirely: two columns of raw values are
+     * all the maths needs.
+     */
     protected function getData(): array
     {
         $weeks = collect(range(7, 0))
             ->map(fn (int $back) => Clock::today()->subWeeks($back)->startOfWeek());
 
-        $completed = [];
-        $cancelled = [];
-        $upcoming = [];
-        $labels = [];
+        $firstWeek = $weeks->first();
+        $lastWeek = $weeks->last();
 
-        foreach ($weeks as $weekStart) {
-            $range = [$weekStart->utc(), $weekStart->endOfWeek()->utc()];
+        // Week start (clinic time) => position in the arrays below.
+        $indexByWeek = $weeks
+            ->mapWithKeys(fn ($week, int $index): array => [$week->toDateString() => $index])
+            ->all();
 
-            $counts = Appointment::query()
-                ->whereBetween('starts_at', $range)
-                ->get(['status'])
-                ->countBy(fn (Appointment $a): string => $a->status->value);
+        $completed = array_fill(0, $weeks->count(), 0);
+        $cancelled = array_fill(0, $weeks->count(), 0);
+        $upcoming = array_fill(0, $weeks->count(), 0);
 
-            $completed[] = (int) $counts->get(AppointmentStatus::Completed->value, 0);
-            $cancelled[] = (int) $counts->get(AppointmentStatus::Cancelled->value, 0)
-                + (int) $counts->get(AppointmentStatus::Rescheduled->value, 0);
-            $upcoming[] = (int) $counts->get(AppointmentStatus::Confirmed->value, 0)
-                + (int) $counts->get(AppointmentStatus::Pending->value, 0);
+        $rows = Appointment::query()
+            ->whereBetween('starts_at', [$firstWeek->utc(), $lastWeek->endOfWeek()->utc()])
+            ->toBase()
+            ->get(['starts_at', 'status']);
 
-            $labels[] = $weekStart->format('j M');
+        foreach ($rows as $row) {
+            // Stored UTC, bucketed by the clinic's week — an evening
+            // appointment in Dhaka is the previous day in UTC, and bucketing on
+            // the raw column would file it under the wrong week.
+            $week = Clock::fromStorage(CarbonImmutable::parse($row->starts_at, 'UTC'))
+                ->startOfWeek()
+                ->toDateString();
+
+            $index = $indexByWeek[$week] ?? null;
+
+            if ($index === null) {
+                continue;
+            }
+
+            match ($row->status) {
+                AppointmentStatus::Completed->value => $completed[$index]++,
+                AppointmentStatus::Cancelled->value,
+                AppointmentStatus::Rescheduled->value => $cancelled[$index]++,
+                AppointmentStatus::Confirmed->value,
+                AppointmentStatus::Pending->value => $upcoming[$index]++,
+                default => null,
+            };
         }
+
+        $labels = $weeks->map(fn ($week): string => $week->format('j M'))->all();
 
         return [
             'datasets' => [
